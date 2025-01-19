@@ -12,8 +12,18 @@ sol!(
 );
 sol!(
     #![sol(all_derives = true)]
+    IInterpreterV4,
+    "../../out/IInterpreterV4.sol/IInterpreterV4.json"
+);
+sol!(
+    #![sol(all_derives = true)]
     IInterpreterStoreV1,
     "../../out/IInterpreterStoreV1.sol/IInterpreterStoreV1.json"
+);
+sol!(
+    #![sol(all_derives = true)]
+    IInterpreterStoreV2,
+    "../../out/IInterpreterStoreV2.sol/IInterpreterStoreV2.json"
 );
 sol!(
     #![sol(all_derives = true)]

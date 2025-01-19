@@ -73,12 +73,19 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0ba1c79677c9ce51c8d45e20845b05e6fb070ea2c863fba03ad6af2c778474bd"
 dependencies = [
  "alloy-consensus",
+ "alloy-contract",
  "alloy-core",
  "alloy-eips",
  "alloy-genesis",
+ "alloy-network",
+ "alloy-node-bindings",
  "alloy-provider",
  "alloy-rpc-client",
+ "alloy-rpc-types",
  "alloy-serde",
+ "alloy-signer",
+ "alloy-signer-local",
+ "alloy-transport",
  "alloy-transport-http",
 ]
 
@@ -280,6 +287,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "alloy-node-bindings"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "494b2fb0276a78ec13791446a417c2517eee5c8e8a8c520ae0681975b8056e5c"
+dependencies = [
+ "alloy-genesis",
+ "alloy-primitives 0.7.7",
+ "k256",
+ "serde_json",
+ "tempfile",
+ "thiserror",
+ "tracing",
+ "url",
+]
+
+[[package]]
 name = "alloy-primitives"
 version = "0.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -340,9 +363,12 @@ dependencies = [
  "alloy-eips",
  "alloy-json-rpc",
  "alloy-network",
+ "alloy-node-bindings",
  "alloy-primitives 0.7.7",
  "alloy-rpc-client",
+ "alloy-rpc-types-anvil",
  "alloy-rpc-types-eth",
+ "alloy-signer-local",
  "alloy-transport",
  "alloy-transport-http",
  "async-stream",
@@ -433,6 +459,17 @@ dependencies = [
  "alloy-rpc-types-eth",
  "alloy-rpc-types-trace",
  "alloy-serde",
+]
+
+[[package]]
+name = "alloy-rpc-types-anvil"
+version = "0.1.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8c7cf4356a9d00df76d6e90d002e2a7b5edc1c8476e90e6f17ab868d99db6435"
+dependencies = [
+ "alloy-primitives 0.7.7",
+ "alloy-serde",
+ "serde",
 ]
 
 [[package]]
@@ -5100,14 +5137,14 @@ dependencies = [
 
 [[package]]
 name = "rain-i9r-cli"
-version = "0.0.1"
+version = "0.0.0-alpha.0"
 dependencies = [
  "alloy",
  "anyhow",
  "clap",
- "rain-interpreter-env",
  "rain-interpreter-eval",
  "rain_interpreter_bindings",
+ "rain_interpreter_test_fixtures",
  "serde",
  "serde_bytes",
  "tokio",
@@ -5116,24 +5153,16 @@ dependencies = [
 ]
 
 [[package]]
-name = "rain-interpreter-env"
-version = "0.0.0"
-dependencies = [
- "alloy",
- "once_cell",
-]
-
-[[package]]
 name = "rain-interpreter-eval"
-version = "0.1.0"
+version = "0.0.0-alpha.0"
 dependencies = [
  "alloy",
  "eyre",
  "foundry-evm",
  "once_cell",
  "rain-error-decoding",
- "rain-interpreter-env",
  "rain_interpreter_bindings",
+ "rain_interpreter_test_fixtures",
  "reqwest 0.11.27",
  "revm",
  "serde",
@@ -5145,14 +5174,14 @@ dependencies = [
 
 [[package]]
 name = "rain_interpreter_bindings"
-version = "0.1.0"
+version = "0.0.0-alpha.0"
 dependencies = [
  "alloy",
 ]
 
 [[package]]
 name = "rain_interpreter_dispair"
-version = "0.1.0"
+version = "0.0.0-alpha.0"
 dependencies = [
  "alloy",
  "alloy-ethers-typecast",
@@ -5168,7 +5197,7 @@ dependencies = [
 
 [[package]]
 name = "rain_interpreter_parser"
-version = "0.1.0"
+version = "0.0.0-alpha.0"
 dependencies = [
  "alloy",
  "alloy-ethers-typecast",
@@ -5179,6 +5208,15 @@ dependencies = [
  "serde_json",
  "thiserror",
  "tokio",
+]
+
+[[package]]
+name = "rain_interpreter_test_fixtures"
+version = "0.0.0-alpha.0"
+dependencies = [
+ "alloy",
+ "getrandom",
+ "serde_json",
 ]
 
 [[package]]

@@ -1,10 +1,10 @@
 [package]
 name = "rain_interpreter_dispair"
-version = "0.1.0"
-edition = "2021"
-license = "CAL-1.0"
 description = "Rain Interpreter Rust Crate."
-homepage = "https://github.com/rainlanguage/rain.interpreter"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
 
 [dependencies]
 alloy-ethers-typecast = { workspace = true }

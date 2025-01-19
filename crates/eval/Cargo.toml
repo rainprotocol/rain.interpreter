@@ -1,6 +1,6 @@
 [package]
 name = "rain-interpreter-eval"
-version = "0.1.0"
+version.workspace = true
 edition.workspace = true
 license.workspace = true
 homepage.workspace = true
@@ -23,4 +23,4 @@ revm = { workspace = true }
 [dev-dependencies]
 tokio = { version = "1.28.0", features = ["full"] }
 tracing = { workspace = true }
-rain-interpreter-env = { workspace = true }
+rain_interpreter_test_fixtures = { workspace = true }
