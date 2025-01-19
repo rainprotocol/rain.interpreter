@@ -48,7 +48,7 @@ jobs:
         run: nix develop --command rainix-sol-artifacts
         env:
           DEPLOY_BROADCAST: '1'
-          DEPLOYMENT_KEY: ${{ github.ref == 'refs/heads/main' && secrets.PRIVATE_KEY || secrets.PRIVATE_KEY_DEV }}
+          DEPLOYMENT_KEY: ${{ (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/3.x') && secrets.PRIVATE_KEY || secrets.PRIVATE_KEY_DEV }}
           ETH_RPC_URL: ${{ secrets[env.rpc_secret_name] || vars[env.rpc_secret_name] || '' }}
           ETHERSCAN_API_KEY: ${{ secrets[env.etherscan_api_key_secret_name] || vars[env.etherscan_api_key_secret_name] || ''}}
           DEPLOY_VERIFY: ${{ secrets[env.verify_secret_name] || vars[env.verify_secret_name] || '' }}
