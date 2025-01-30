@@ -30,16 +30,16 @@
                 -t cbor \
                 -e deflate \
                 -l none \
-                -o meta/RainterpreterExpressionDeployerNPE2.rain.meta \
+                -o meta/RainterpreterExpressionDeployer.rain.meta \
               ;
 
               rain meta build \
-                -i <(cat ./meta/RainterpreterReferenceExternNPE2AuthoringMeta.rain.meta) \
+                -i <(cat ./meta/RainterpreterReferenceExternAuthoringMeta.rain.meta) \
                 -m authoring-meta-v2 \
                 -t cbor \
                 -e deflate \
                 -l none \
-                -o meta/RainterpreterReferenceExternNPE2.rain.meta \
+                -o meta/RainterpreterReferenceExtern.rain.meta \
             '';
             additionalBuildInputs = rainix.sol-build-inputs.${system} ++ [rain.defaultPackage.${system}];
           };
@@ -48,7 +48,7 @@
             name = "test-wasm-build";
             body = ''
               set -euxo pipefail
-              
+
               cargo build --target wasm32-unknown-unknown --exclude rain-i9r-cli --exclude rain-interpreter-env --workspace
             '';
           };

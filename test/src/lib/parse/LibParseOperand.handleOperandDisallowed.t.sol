@@ -2,12 +2,12 @@
 pragma solidity =0.8.25;
 
 import {Test} from "forge-std/Test.sol";
-import {LibParseOperand, Operand} from "src/lib/parse/LibParseOperand.sol";
+import {LibParseOperand, OperandV2} from "src/lib/parse/LibParseOperand.sol";
 import {UnexpectedOperand} from "src/error/ErrParse.sol";
 
 contract LibParseOperandHandleOperandDisallowedTest is Test {
     function testHandleOperandDisallowedNoValues() external pure {
-        assertEq(Operand.unwrap(LibParseOperand.handleOperandDisallowed(new uint256[](0))), 0);
+        assertEq(OperandV2.unwrap(LibParseOperand.handleOperandDisallowed(new uint256[](0))), 0);
     }
 
     function testHandleOperandDisallowedAnyValues(uint256[] memory values) external {

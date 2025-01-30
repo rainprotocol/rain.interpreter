@@ -1,14 +1,14 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
-// import {OpTest, IntegrityCheckStateNP, InterpreterStateNP, Operand, stdError} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, InterpreterState, Operand, stdError} from "test/abstract/OpTest.sol";
 // import {LibOpSub} from "src/lib/op/math/LibOpSub.sol";
 // import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
 // contract LibOpSubTest is OpTest {
 //     /// Directly test the integrity logic of LibOpSub. This tests the happy
 //     /// path where the inputs input and calc match.
-//     function testOpSubIntegrityHappy(IntegrityCheckStateNP memory state, uint8 inputs, uint16 operandData)
+//     function testOpSubIntegrityHappy(IntegrityCheckState memory state, uint8 inputs, uint16 operandData)
 //         external
 //         pure
 //     {
@@ -21,7 +21,7 @@
 
 // /// Directly test the integrity logic of LibOpSub. This tests the unhappy
 // /// path where the operand is invalid due to 0 inputs.
-// function testOpSubIntegrityUnhappyZeroInputs(IntegrityCheckStateNP memory state) external pure {
+// function testOpSubIntegrityUnhappyZeroInputs(IntegrityCheckState memory state) external pure {
 //     (uint256 calcInputs, uint256 calcOutputs) = LibOpSub.integrity(state, Operand.wrap(0));
 //     // Calc inputs will be minimum 2.
 //     assertEq(calcInputs, 2);
@@ -30,7 +30,7 @@
 
 // /// Directly test the integrity logic of LibOpSub. This tests the unhappy
 // /// path where the operand is invalid due to 1 inputs.
-// function testOpSubIntegrityUnhappyOneInput(IntegrityCheckStateNP memory state) external pure {
+// function testOpSubIntegrityUnhappyOneInput(IntegrityCheckState memory state) external pure {
 //     (uint256 calcInputs, uint256 calcOutputs) = LibOpSub.integrity(state, Operand.wrap(0x010000));
 //     // Calc inputs will be minimum 2.
 //     assertEq(calcInputs, 2);
@@ -39,7 +39,7 @@
 
 //     /// Directly test the runtime logic of LibOpSub.
 //     function testOpSubRun(uint256[] memory inputs) external {
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 //         vm.assume(inputs.length >= 2);
 //         vm.assume(inputs.length <= 0x0F);
 //         Operand operand = LibOperand.build(uint8(inputs.length), 1, 0);

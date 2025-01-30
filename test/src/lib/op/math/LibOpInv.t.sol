@@ -1,14 +1,14 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
-// import {OpTest, IntegrityCheckStateNP, Operand, InterpreterStateNP, UnexpectedOperand} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, Operand, InterpreterState, UnexpectedOperand} from "test/abstract/OpTest.sol";
 // import {LibOpInv} from "src/lib/op/math/LibOpInv.sol";
 // import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
 // contract LibOpInvTest is OpTest {
 //     /// Directly test the integrity logic of LibOpInv.
 //     /// Inputs are always 1, outputs are always 1.
-//     function testOpInvIntegrity(IntegrityCheckStateNP memory state, Operand operand) external pure {
+//     function testOpInvIntegrity(IntegrityCheckState memory state, Operand operand) external pure {
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpInv.integrity(state, operand);
 //         assertEq(calcInputs, 1);
 //         assertEq(calcOutputs, 1);
@@ -18,7 +18,7 @@
 //     function testOpInvRun(uint256 a, uint16 operandData) public view {
 //         // 0 is division by 0.
 //         a = bound(a, 1, type(uint64).max - 1e18);
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 
 //         Operand operand = LibOperand.build(1, 1, operandData);
 //         uint256[] memory inputs = new uint256[](1);

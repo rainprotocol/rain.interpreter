@@ -3,19 +3,21 @@ pragma solidity =0.8.25;
 
 import {Test} from "forge-std/Test.sol";
 
-import {LibInterpreterStateNP, InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
+import {LibInterpreterState, InterpreterState} from "src/lib/state/LibInterpreterState.sol";
 import {LibAllStandardOpsNP} from "src/lib/op/LibAllStandardOpsNP.sol";
-import {LibEvalNP} from "src/lib/eval/LibEvalNP.sol";
+import {LibEval} from "src/lib/eval/LibEval.sol";
 import {MemoryKV} from "rain.lib.memkv/lib/LibMemoryKV.sol";
 import {
-    IInterpreterStoreV2, FullyQualifiedNamespace
-} from "rain.interpreter.interface/interface/IInterpreterStoreV2.sol";
+    IInterpreterStoreV3,
+    FullyQualifiedNamespace
+} from "rain.interpreter.interface/interface/unstable/IInterpreterStoreV3.sol";
+import {StackItem} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 
-contract LibEvalNPFBoundsTest is Test {
+contract LibEvalFBoundsTest is Test {
     /// Due to the mod of indexes to function pointers the indexes wrap at the
     /// length of the function pointers. Test that the length of the fn pointers
     /// + 1 is the constant op.
-    function testEvalNPFBoundsModConstant(uint256 c) public view {
+    function testEvalNPFBoundsModConstant(bytes32 c) public view {
         bytes memory fs = LibAllStandardOpsNP.opcodeFunctionPointers();
 
         bytes memory bytecode =
@@ -108,27 +110,27 @@ contract LibEvalNPFBoundsTest is Test {
 
         uint256 expectedLength = 37;
 
-        uint256[][] memory stacks = new uint256[][](1);
-        stacks[0] = new uint256[](expectedLength);
-        uint256[] memory constants = new uint256[](1);
+        StackItem[][] memory stacks = new StackItem[][](1);
+        stacks[0] = new StackItem[](expectedLength);
+        bytes32[] memory constants = new bytes32[](1);
         constants[0] = c;
-        uint256[][] memory context = new uint256[][](0);
-        InterpreterStateNP memory state = InterpreterStateNP(
-            LibInterpreterStateNP.stackBottoms(stacks),
+        bytes32[][] memory context = new bytes32[][](0);
+        InterpreterState memory state = InterpreterState(
+            LibInterpreterState.stackBottoms(stacks),
             constants,
             0,
             MemoryKV.wrap(0),
             FullyQualifiedNamespace.wrap(0),
-            IInterpreterStoreV2(address(0)),
+            IInterpreterStoreV3(address(0)),
             context,
             bytecode,
             fs
         );
 
-        (uint256[] memory outputs, uint256[] memory kvs) = LibEvalNP.eval2(state, new uint256[](0), type(uint256).max);
+        (StackItem[] memory outputs, bytes32[] memory kvs) = LibEval.eval2(state, new StackItem[](0), type(uint256).max);
         assertEq(outputs.length, expectedLength);
         for (uint256 i = 0; i < outputs.length; i++) {
-            assertEq(outputs[i], c);
+            assertEq(StackItem.unwrap(outputs[i]), c);
         }
         assertEq(kvs.length, 0);
 
@@ -137,10 +139,10 @@ contract LibEvalNPFBoundsTest is Test {
             bytecode[i] = bytes1(uint8(uint8(fs.length / 2) + 1));
         }
 
-        (outputs, kvs) = LibEvalNP.eval2(state, new uint256[](0), type(uint256).max);
+        (outputs, kvs) = LibEval.eval2(state, new StackItem[](0), type(uint256).max);
         assertEq(outputs.length, expectedLength);
         for (uint256 i = 0; i < outputs.length; i++) {
-            assertEq(outputs[i], c);
+            assertEq(StackItem.unwrap(outputs[i]), c);
         }
         assertEq(kvs.length, 0);
     }

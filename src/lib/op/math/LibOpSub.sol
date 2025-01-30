@@ -1,16 +1,16 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity ^0.8.18;
+// SPDX-License-Identifier: CAL
+pragma solidity ^0.8.18;
 
-// import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+// import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 // import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-// import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
-// import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
+// import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
+// import {InterpreterState} from "../../state/LibInterpreterState.sol";
 // import {SaturatingMath} from "rain.math.saturating/SaturatingMath.sol";
 
 // /// @title LibOpSub
 // /// @notice Opcode to subtract N integers.
 // library LibOpSub {
-//     function integrity(IntegrityCheckStateNP memory, Operand operand) internal pure returns (uint256, uint256) {
+//     function integrity(IntegrityCheckState memory, Operand operand) internal pure returns (uint256, uint256) {
 //         // There must be at least two inputs.
 //         uint256 inputs = (Operand.unwrap(operand) >> 0x10) & 0x0F;
 //         inputs = inputs > 1 ? inputs : 2;
@@ -23,7 +23,7 @@
 
 //     /// sub
 //     /// Subtraction with implied overflow checks from the Solidity 0.8.x compiler.
-//     function run(InterpreterStateNP memory, Operand operand, Pointer stackTop) internal pure returns (Pointer) {
+//     function run(InterpreterState memory, Operand operand, Pointer stackTop) internal pure returns (Pointer) {
 //         uint256 a;
 //         uint256 b;
 //         uint256 saturate;
@@ -60,7 +60,7 @@
 //     }
 
 //     /// Gas intensive reference implementation of subtraction for testing.
-//     function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory inputs)
+//     function referenceFn(InterpreterState memory, Operand, uint256[] memory inputs)
 //         internal
 //         pure
 //         returns (uint256[] memory outputs)

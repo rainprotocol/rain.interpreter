@@ -1,5 +1,5 @@
-// // // SPDX-License-Identifier: CAL
-// // pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // // import {OpTest} from "test/abstract/OpTest.sol";
 // // import {LibContext} from "rain.interpreter.interface/lib/caller/LibContext.sol";
@@ -13,8 +13,8 @@
 // //     EvalV4
 // // } from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 // // import {SignedContextV1} from "rain.interpreter.interface/interface/IInterpreterCallerV3.sol";
-// // import {InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
-// // import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// // import {InterpreterState} from "src/lib/state/LibInterpreterState.sol";
+// // import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 // // import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
 // contract LibOpLessThanNPTest is OpTest {
@@ -22,7 +22,7 @@
 //     /// operand inputs, the calc inputs must be 2, and the calc outputs must be
 //     /// 1.
 //     function testOpLessThanNPIntegrityHappy(
-//         IntegrityCheckStateNP memory state,
+//         IntegrityCheckState memory state,
 //         uint8 inputs,
 //         uint8 outputs,
 //         uint16 operandData
@@ -39,7 +39,7 @@
 
 //     /// Directly test the runtime logic of LibOpLessThanNP.
 //     function testOpLessThanNPRun(uint256 input1, uint256 input2) external view {
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 //         uint256[] memory inputs = new uint256[](2);
 //         inputs[0] = input1;
 //         inputs[1] = input2;

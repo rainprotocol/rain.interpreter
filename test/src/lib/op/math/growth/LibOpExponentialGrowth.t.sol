@@ -1,14 +1,14 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
-// import {OpTest, IntegrityCheckStateNP, Operand, InterpreterStateNP, UnexpectedOperand} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, Operand, InterpreterState, UnexpectedOperand} from "test/abstract/OpTest.sol";
 // import {LibOpExponentialGrowth} from "src/lib/op/math/growth/LibOpExponentialGrowth.sol";
 // import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
 // contract LibOpExponentialGrowthTest is OpTest {
 //     /// Directly test the integrity logic of LibOpExponentialGrowth.
 //     /// Inputs are always 3, outputs are always 1.
-//     function testOpExponentialGrowthIntegrity(IntegrityCheckStateNP memory state, Operand operand) external pure {
+//     function testOpExponentialGrowthIntegrity(IntegrityCheckState memory state, Operand operand) external pure {
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpExponentialGrowth.integrity(state, operand);
 //         assertEq(calcInputs, 3);
 //         assertEq(calcOutputs, 1);
@@ -23,7 +23,7 @@
 //         // PRB math can't reliably handle t beyond 44e18 with a and r both up to
 //         // ~18e18 (uint64 max).
 //         t = bound(t, 0, 44e18);
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 
 //         Operand operand = LibOperand.build(3, 1, operandData);
 //         uint256[] memory inputs = new uint256[](3);

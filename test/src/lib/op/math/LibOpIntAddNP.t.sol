@@ -1,15 +1,15 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // import {stdError} from "forge-std/Test.sol";
-// import {OpTest, IntegrityCheckStateNP, Operand, InterpreterStateNP} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, Operand, InterpreterState} from "test/abstract/OpTest.sol";
 // import {LibOpAdd} from "src/lib/op/math/LibOpAdd.sol";
 // import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
 // contract LibOpAddTest is OpTest {
 //     /// Directly test the integrity logic of LibOpAdd. This tests the happy
 //     /// path where the inputs and calc match.
-//     function testOpAddIntegrityHappy(IntegrityCheckStateNP memory state, uint8 inputs, uint16 operandData)
+//     function testOpAddIntegrityHappy(IntegrityCheckState memory state, uint8 inputs, uint16 operandData)
 //         external
 //         pure
 //     {
@@ -22,7 +22,7 @@
 
 // /// Directly test the integrity logic of LibOpAdd. This tests the unhappy
 // /// path where the operand is invalid due to 0 inputs.
-// function testOpAddIntegrityUnhappyZeroInputs(IntegrityCheckStateNP memory state) external pure {
+// function testOpAddIntegrityUnhappyZeroInputs(IntegrityCheckState memory state) external pure {
 //     (uint256 calcInputs, uint256 calcOutputs) = LibOpAdd.integrity(state, Operand.wrap(0));
 //     // Calc inputs will be minimum 2.
 //     assertEq(calcInputs, 2);
@@ -31,7 +31,7 @@
 
 // /// Directly test the integrity logic of LibOpAdd. This tests the unhappy
 // /// path where the operand is invalid due to 1 inputs.
-// function testOpAddIntegrityUnhappyOneInput(IntegrityCheckStateNP memory state) external pure {
+// function testOpAddIntegrityUnhappyOneInput(IntegrityCheckState memory state) external pure {
 //     (uint256 calcInputs, uint256 calcOutputs) = LibOpAdd.integrity(state, Operand.wrap(0x010000));
 //     // Calc inputs will be minimum 2.
 //     assertEq(calcInputs, 2);
@@ -40,7 +40,7 @@
 
 //     /// Directly test the runtime logic of LibOpAdd.
 //     function testOpAddRun(uint256[] memory inputs) external {
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 //         vm.assume(inputs.length >= 2);
 //         vm.assume(inputs.length <= 0x0F);
 //         Operand operand = LibOperand.build(uint8(inputs.length), 1, 0);

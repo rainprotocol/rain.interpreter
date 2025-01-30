@@ -4,11 +4,11 @@ pragma solidity =0.8.25;
 import {ERC165} from "openzeppelin-contracts/contracts/utils/introspection/ERC165.sol";
 import {LibBytes, Pointer} from "rain.solmem/lib/LibBytes.sol";
 
-import {ISubParserV3, AuthoringMetaV2} from "rain.interpreter.interface/interface/ISubParserV3.sol";
+import {ISubParserV4, AuthoringMetaV2} from "rain.interpreter.interface/interface/unstable/ISubParserV4.sol";
 import {IncompatibleSubParser} from "../error/ErrSubParse.sol";
-import {LibSubParse, ParseState, CURRENT_COMPATIBILITY} from "../lib/parse/LibSubParse.sol";
+import {LibSubParse, ParseState} from "../lib/parse/LibSubParse.sol";
 import {CMASK_RHS_WORD_TAIL} from "rain.string/lib/parse/LibParseCMask.sol";
-import {LibParse, Operand} from "../lib/parse/LibParse.sol";
+import {LibParse, OperandV2} from "../lib/parse/LibParse.sol";
 import {LibParseMeta} from "rain.interpreter.interface/lib/parse/LibParseMeta.sol";
 import {LibParseOperand} from "../lib/parse/LibParseOperand.sol";
 import {IDescribedByMetaV1} from "rain.metadata/interface/IDescribedByMetaV1.sol";
@@ -74,7 +74,7 @@ bytes constant SUB_PARSER_LITERAL_PARSERS = hex"";
 ///   fallback logic.
 abstract contract BaseRainterpreterSubParserNPE2 is
     ERC165,
-    ISubParserV3,
+    ISubParserV4,
     IDescribedByMetaV1,
     IParserToolingV1,
     ISubParserToolingV1
@@ -113,15 +113,6 @@ abstract contract BaseRainterpreterSubParserNPE2 is
     }
 
     /// Overrideable function to allow implementations to define their
-    /// compatibility version. Most implementations should leave this as the
-    /// default as it matches the main parser's compatibility version as at the
-    /// same commit the abstract sub parser is pulled from.
-    //slither-disable-next-line dead-code
-    function subParserCompatibility() internal pure virtual returns (bytes32) {
-        return CURRENT_COMPATIBILITY;
-    }
-
-    /// Overrideable function to allow implementations to define their
     /// literal dispatch matching. This is optional, and if not overridden
     /// simply won't attempt to parse any literals. This is usually what you
     /// want, as the main parser will handle common literals and the subparser
@@ -146,19 +137,12 @@ abstract contract BaseRainterpreterSubParserNPE2 is
         internal
         view
         virtual
-        returns (bool success, uint256 index, uint256 value)
+        returns (bool success, uint256 index, bytes32 value)
     {
         (cursor, end);
         success = false;
         index = 0;
         value = 0;
-    }
-
-    modifier onlyCompatible(bytes32 compatibility) {
-        if (compatibility != subParserCompatibility()) {
-            revert IncompatibleSubParser();
-        }
-        _;
     }
 
     /// A basic implementation of sub parsing literals that uses encoded
@@ -168,20 +152,14 @@ abstract contract BaseRainterpreterSubParserNPE2 is
     /// This is virtual but the expectation is that it generally DOES NOT need
     /// to be overridden, as the function pointers and metadata bytes are all
     /// that need to be changed to implement a new subparser.
-    /// @inheritdoc ISubParserV3
-    function subParseLiteral(bytes32 compatibility, bytes memory data)
-        external
-        view
-        virtual
-        onlyCompatible(compatibility)
-        returns (bool, uint256)
-    {
+    /// @inheritdoc ISubParserV4
+    function subParseLiteral2(bytes memory data) external view virtual returns (bool, bytes32) {
         (uint256 dispatchStart, uint256 bodyStart, uint256 bodyEnd) = LibSubParse.consumeSubParseLiteralInputData(data);
 
-        (bool success, uint256 index, uint256 dispatchValue) = matchSubParseLiteralDispatch(dispatchStart, bodyStart);
+        (bool success, uint256 index, bytes32 dispatchValue) = matchSubParseLiteralDispatch(dispatchStart, bodyStart);
 
         if (success) {
-            function (uint256, uint256, uint256) internal pure returns (uint256) subParser;
+            function (bytes32, uint256, uint256) internal pure returns (bytes32) subParser;
             bytes memory localSubParserLiteralParsers = subParserLiteralParsers();
             assembly ("memory-safe") {
                 subParser := and(mload(add(localSubParserLiteralParsers, mul(add(index, 1), 2))), 0xFFFF)
@@ -199,14 +177,8 @@ abstract contract BaseRainterpreterSubParserNPE2 is
     /// This is virtual but the expectation is that it generally DOES NOT need
     /// to be overridden, as the function pointers and metadata bytes are all
     /// that need to be changed to implement a new subparser.
-    /// @inheritdoc ISubParserV3
-    function subParseWord(bytes32 compatibility, bytes memory data)
-        external
-        pure
-        virtual
-        onlyCompatible(compatibility)
-        returns (bool, bytes memory, uint256[] memory)
-    {
+    /// @inheritdoc ISubParserV4
+    function subParseWord2(bytes memory data) external pure virtual returns (bool, bytes memory, bytes32[] memory) {
         (uint256 constantsHeight, uint256 ioByte, ParseState memory state) =
             LibSubParse.consumeSubParseWordInputData(data, subParserParseMeta(), subParserOperandHandlers());
         uint256 cursor = Pointer.unwrap(state.data.dataPointer());
@@ -216,21 +188,22 @@ abstract contract BaseRainterpreterSubParserNPE2 is
         (cursor, word) = LibParse.parseWord(cursor, end, CMASK_RHS_WORD_TAIL);
         (bool exists, uint256 index) = LibParseMeta.lookupWord(state.meta, word);
         if (exists) {
-            Operand operand = state.handleOperand(index);
-            function (uint256, uint256, Operand) internal pure returns (bool, bytes memory, uint256[] memory) subParser;
+            OperandV2 operand = state.handleOperand(index);
+            function (uint256, uint256, OperandV2) internal pure returns (bool, bytes memory, bytes32[] memory)
+                subParser;
             bytes memory localSubParserWordParsers = subParserWordParsers();
             assembly ("memory-safe") {
                 subParser := and(mload(add(localSubParserWordParsers, mul(add(index, 1), 2))), 0xFFFF)
             }
             return subParser(constantsHeight, ioByte, operand);
         } else {
-            return (false, "", new uint256[](0));
+            return (false, "", new bytes32[](0));
         }
     }
 
     /// @inheritdoc ERC165
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
-        return interfaceId == type(ISubParserV3).interfaceId || interfaceId == type(IDescribedByMetaV1).interfaceId
+        return interfaceId == type(ISubParserV4).interfaceId || interfaceId == type(IDescribedByMetaV1).interfaceId
             || super.supportsInterface(interfaceId);
     }
 }

@@ -1,17 +1,17 @@
-// // // SPDX-License-Identifier: CAL
-// // pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // // import {OpTest} from "test/abstract/OpTest.sol";
 // // import {LibContext} from "rain.interpreter.interface/lib/caller/LibContext.sol";
 // // import {LibOpEveryNP} from "src/lib/op/logic/LibOpEveryNP.sol";
-// // import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// // import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 // // import {
 // //     IInterpreterV4,
 // //     Operand,
 // //     SourceIndexV2,
 // //     FullyQualifiedNamespace
 // // } from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-// // import {InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
+// // import {InterpreterState} from "src/lib/state/LibInterpreterState.sol";
 // // import {IInterpreterStoreV2} from "rain.interpreter.interface/interface/IInterpreterStoreV2.sol";
 // // import {SignedContextV1} from "rain.interpreter.interface/interface/IInterpreterCallerV3.sol";
 // // import {LibOperand} from "test/lib/operand/LibOperand.sol";
@@ -20,7 +20,7 @@
 //     /// Directly test the integrity logic of LibOpEveryNP. This tests the happy
 //     /// path where the operand is valid.
 //     function testOpEveryNPIntegrityHappy(
-//         IntegrityCheckStateNP memory state,
+//         IntegrityCheckState memory state,
 //         uint8 inputs,
 //         uint8 outputs,
 //         uint16 operandData
@@ -37,7 +37,7 @@
 
 //     /// Directly test the integrity logic of LibOpEveryNP. This tests the unhappy
 //     /// path where the operand is invalid due to 0 inputs.
-//     function testOpEveryNPIntegrityUnhappyZeroInputs(IntegrityCheckStateNP memory state) external pure {
+//     function testOpEveryNPIntegrityUnhappyZeroInputs(IntegrityCheckState memory state) external pure {
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpEveryNP.integrity(state, Operand.wrap(0));
 //         // Calc inputs will be minimum 1.
 //         assertEq(calcInputs, 1);
@@ -46,7 +46,7 @@
 
 //     /// Directly test the runtime logic of LibOpEveryNP.
 //     function testOpEveryNPRun(uint256[] memory inputs) external view {
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 //         vm.assume(inputs.length != 0);
 //         vm.assume(inputs.length <= 0x0F);
 //         Operand operand = LibOperand.build(uint8(inputs.length), 1, 0);

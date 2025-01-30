@@ -2,7 +2,7 @@
 pragma solidity =0.8.25;
 
 import {Test} from "forge-std/Test.sol";
-import {LibParseOperand, Operand} from "src/lib/parse/LibParseOperand.sol";
+import {LibParseOperand, OperandV2} from "src/lib/parse/LibParseOperand.sol";
 import {UnexpectedOperandValue, ExpectedOperand} from "src/error/ErrParse.sol";
 import {LibParseLiteral} from "src/lib/parse/literal/LibParseLiteral.sol";
 import {OperandOverflow} from "src/error/ErrParse.sol";
@@ -11,7 +11,7 @@ contract LibParseOperandHandleOperandSingleFullTest is Test {
     // No values errors.
     function testHandleOperandSingleFullNoDefaultNoValues() external {
         vm.expectRevert(abi.encodeWithSelector(ExpectedOperand.selector));
-        Operand.unwrap(LibParseOperand.handleOperandSingleFullNoDefault(new uint256[](0)));
+        OperandV2.unwrap(LibParseOperand.handleOperandSingleFullNoDefault(new uint256[](0)));
     }
 
     // A single value of up to 2 bytes is allowed.
@@ -19,7 +19,7 @@ contract LibParseOperandHandleOperandSingleFullTest is Test {
         value = bound(value, 0, type(uint16).max);
         uint256[] memory values = new uint256[](1);
         values[0] = value;
-        assertEq(Operand.unwrap(LibParseOperand.handleOperandSingleFullNoDefault(values)), value);
+        assertEq(OperandV2.unwrap(LibParseOperand.handleOperandSingleFullNoDefault(values)), value);
     }
 
     // Single values outside 2 bytes are disallowed.

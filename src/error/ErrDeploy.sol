@@ -11,7 +11,7 @@ contract ErrDeploy {}
 /// address upon construction.
 error UnexpectedPointers(bytes actualPointers);
 
-/// Thrown when the `RainterpreterExpressionDeployerNPE2` is constructed with
+/// Thrown when the `RainterpreterExpressionDeployer` is constructed with
 /// unknown interpreter bytecode.
 /// @param expectedBytecodeHash The bytecode hash that was expected at the
 /// interpreter address upon construction.
@@ -19,14 +19,14 @@ error UnexpectedPointers(bytes actualPointers);
 /// address upon construction.
 error UnexpectedInterpreterBytecodeHash(bytes32 expectedBytecodeHash, bytes32 actualBytecodeHash);
 
-/// Thrown when the `RainterpreterNPE2` is constructed with unknown store bytecode.
+/// Thrown when the `Rainterpreter` is constructed with unknown store bytecode.
 /// @param expectedBytecodeHash The bytecode hash that was expected at the store
 /// address upon construction.
 /// @param actualBytecodeHash The bytecode hash that was found at the store
 /// address upon construction.
 error UnexpectedStoreBytecodeHash(bytes32 expectedBytecodeHash, bytes32 actualBytecodeHash);
 
-/// Thrown when the `RainterpreterNPE2` is constructed with unknown parser
+/// Thrown when the `Rainterpreter` is constructed with unknown parser
 /// bytecode.
 /// @param expectedBytecodeHash The bytecode hash that was expected at the parser
 /// address upon construction.
@@ -34,7 +34,7 @@ error UnexpectedStoreBytecodeHash(bytes32 expectedBytecodeHash, bytes32 actualBy
 /// address upon construction.
 error UnexpectedParserBytecodeHash(bytes32 expectedBytecodeHash, bytes32 actualBytecodeHash);
 
-/// Thrown when the `RainterpreterNPE2` is constructed with unknown meta.
+/// Thrown when the `Rainterpreter` is constructed with unknown meta.
 /// @param expectedConstructionMetaHash The meta hash that was expected upon
 /// construction.
 /// @param actualConstructionMetaHash The meta hash that was found upon

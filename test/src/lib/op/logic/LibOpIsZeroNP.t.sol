@@ -1,12 +1,12 @@
-// // // SPDX-License-Identifier: CAL
-// // pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // // import {OpTest} from "test/abstract/OpTest.sol";
 // // import {LibContext} from "rain.interpreter.interface/lib/caller/LibContext.sol";
-// // import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// // import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 // // import {LibUint256Array} from "rain.solmem/lib/LibUint256Array.sol";
 // // import {LibOpIsZeroNP} from "src/lib/op/logic/LibOpIsZeroNP.sol";
-// // import {InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
+// // import {InterpreterState} from "src/lib/state/LibInterpreterState.sol";
 // // import {
 // //     IInterpreterV4,
 // //     Operand,
@@ -23,7 +23,7 @@
 //     /// Directly test the integrity logic of LibOpIsZeroNP. This tests the happy
 //     /// path where the operand is valid. IsZero is a 1 input, 1 output op.
 //     function testOpIsZeroNPIntegrityHappy(
-//         IntegrityCheckStateNP memory state,
+//         IntegrityCheckState memory state,
 //         uint8 inputs,
 //         uint8 outputs,
 //         uint16 operandData
@@ -40,7 +40,7 @@
 
 //     /// Directly test the runtime logic of LibOpIsZeroNP.
 //     function testOpIsZeroNPRun(uint256 input) external view {
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 //         uint256[] memory inputs = new uint256[](1);
 //         inputs[0] = input;
 //         Operand operand = LibOperand.build(uint8(inputs.length), 1, 0);

@@ -4,10 +4,10 @@ pragma solidity ^0.8.19;
 import {BadDynamicLength} from "../../error/ErrOpList.sol";
 import {LibConvert} from "rain.lib.typecast/LibConvert.sol";
 import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {AuthoringMetaV2} from "rain.interpreter.interface/interface/IParserV2.sol";
-import {LibIntegrityCheckNP, IntegrityCheckStateNP} from "../integrity/LibIntegrityCheckNP.sol";
-import {LibInterpreterStateNP, InterpreterStateNP} from "../state/LibInterpreterStateNP.sol";
+import {LibIntegrityCheckNP, IntegrityCheckState} from "../integrity/LibIntegrityCheckNP.sol";
+import {LibInterpreterState, InterpreterState} from "../state/LibInterpreterState.sol";
 import {LibParseOperand} from "../parse/LibParseOperand.sol";
 import {LibUint256Array} from "rain.solmem/lib/LibUint256Array.sol";
 
@@ -24,7 +24,7 @@ import {LibOpEncodeBitsNP} from "./bitwise/LibOpEncodeBitsNP.sol";
 import {LibOpShiftBitsLeftNP} from "./bitwise/LibOpShiftBitsLeftNP.sol";
 import {LibOpShiftBitsRightNP} from "./bitwise/LibOpShiftBitsRightNP.sol";
 
-import {LibOpCallNP} from "./call/LibOpCallNP.sol";
+import {LibOpCall} from "./call/LibOpCall.sol";
 
 import {LibOpHashNP} from "./crypto/LibOpHashNP.sol";
 
@@ -93,8 +93,8 @@ import {LibOpMod} from "./math/LibOpMod.sol";
 // import {LibOpSqrt} from "./math/LibOpSqrt.sol";
 // import {LibOpSub} from "./math/LibOpSub.sol";
 
-import {LibOpGetNP} from "./store/LibOpGetNP.sol";
-import {LibOpSetNP} from "./store/LibOpSetNP.sol";
+import {LibOpGet} from "./store/LibOpGet.sol";
+import {LibOpSet} from "./store/LibOpSet.sol";
 
 import {LibParseLiteral, ParseState, LITERAL_PARSERS_LENGTH} from "../parse/literal/LibParseLiteral.sol";
 import {LibParseLiteralString} from "../parse/literal/LibParseLiteralString.sol";
@@ -320,12 +320,12 @@ library LibAllStandardOpsNP {
 
     function literalParserFunctionPointers() internal pure returns (bytes memory) {
         unchecked {
-            function (ParseState memory, uint256, uint256) view returns (uint256, uint256) lengthPointer;
+            function (ParseState memory, uint256, uint256) view returns (uint256, bytes32) lengthPointer;
             uint256 length = LITERAL_PARSERS_LENGTH;
             assembly ("memory-safe") {
                 lengthPointer := length
             }
-            function (ParseState memory, uint256, uint256) view returns (uint256, uint256)[LITERAL_PARSERS_LENGTH + 1]
+            function (ParseState memory, uint256, uint256) view returns (uint256, bytes32)[LITERAL_PARSERS_LENGTH + 1]
                 memory pointersFixed = [
                     lengthPointer,
                     LibParseLiteralHex.parseHex,
@@ -348,12 +348,12 @@ library LibAllStandardOpsNP {
 
     function operandHandlerFunctionPointers() internal pure returns (bytes memory) {
         unchecked {
-            function (uint256[] memory) internal pure returns (Operand) lengthPointer;
+            function (bytes32[] memory) internal pure returns (OperandV2) lengthPointer;
             uint256 length = ALL_STANDARD_OPS_LENGTH;
             assembly ("memory-safe") {
                 lengthPointer := length
             }
-            function (uint256[] memory) internal pure returns (Operand)[ALL_STANDARD_OPS_LENGTH + 1] memory
+            function (bytes32[] memory) internal pure returns (OperandV2)[ALL_STANDARD_OPS_LENGTH + 1] memory
                 pointersFixed = [
                     lengthPointer,
                     // stack
@@ -522,14 +522,14 @@ library LibAllStandardOpsNP {
 
     function integrityFunctionPointers() internal pure returns (bytes memory) {
         unchecked {
-            function(IntegrityCheckStateNP memory, Operand)
+            function(IntegrityCheckState memory, OperandV2)
                 view
                 returns (uint256, uint256) lengthPointer;
             uint256 length = ALL_STANDARD_OPS_LENGTH;
             assembly ("memory-safe") {
                 lengthPointer := length
             }
-            function(IntegrityCheckStateNP memory, Operand)
+            function(IntegrityCheckState memory, OperandV2)
                 view
                 returns (uint256, uint256)[ALL_STANDARD_OPS_LENGTH + 1] memory pointersFixed = [
                     lengthPointer,
@@ -547,7 +547,7 @@ library LibAllStandardOpsNP {
                     LibOpEncodeBitsNP.integrity,
                     LibOpShiftBitsLeftNP.integrity,
                     LibOpShiftBitsRightNP.integrity,
-                    LibOpCallNP.integrity,
+                    LibOpCall.integrity,
                     LibOpHashNP.integrity,
                     // LibOpUint256ERC20Allowance.integrity,
                     // LibOpUint256ERC20BalanceOf.integrity,
@@ -613,8 +613,8 @@ library LibAllStandardOpsNP {
                     // LibOpSub.integrity,
                     // // saturating-sub is a repeat of sub.
                     // LibOpSub.integrity,
-                    LibOpGetNP.integrity,
-                    LibOpSetNP.integrity
+                    LibOpGet.integrity,
+                    LibOpSet.integrity
                 ];
             uint256[] memory pointersDynamic;
             assembly ("memory-safe") {
@@ -634,14 +634,14 @@ library LibAllStandardOpsNP {
     /// method can just be a thin wrapper around this function.
     function opcodeFunctionPointers() internal pure returns (bytes memory) {
         unchecked {
-            function(InterpreterStateNP memory, Operand, Pointer)
+            function(InterpreterState memory, OperandV2, Pointer)
                 view
                 returns (Pointer) lengthPointer;
             uint256 length = ALL_STANDARD_OPS_LENGTH;
             assembly ("memory-safe") {
                 lengthPointer := length
             }
-            function(InterpreterStateNP memory, Operand, Pointer)
+            function(InterpreterState memory, OperandV2, Pointer)
                 view
                 returns (Pointer)[ALL_STANDARD_OPS_LENGTH + 1] memory pointersFixed = [
                     lengthPointer,
@@ -659,7 +659,7 @@ library LibAllStandardOpsNP {
                     LibOpEncodeBitsNP.run,
                     LibOpShiftBitsLeftNP.run,
                     LibOpShiftBitsRightNP.run,
-                    LibOpCallNP.run,
+                    LibOpCall.run,
                     LibOpHashNP.run,
                     // LibOpUint256ERC20Allowance.run,
                     // LibOpUint256ERC20BalanceOf.run,
@@ -725,8 +725,8 @@ library LibAllStandardOpsNP {
                     // LibOpSub.run,
                     // // saturating-sub is a repeat of sub.
                     // LibOpSub.run,
-                    LibOpGetNP.run,
-                    LibOpSetNP.run
+                    LibOpGet.run,
+                    LibOpSet.run
                 ];
             uint256[] memory pointersDynamic;
             assembly ("memory-safe") {

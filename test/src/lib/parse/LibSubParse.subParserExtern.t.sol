@@ -2,7 +2,7 @@
 pragma solidity =0.8.25;
 
 import {Test} from "forge-std/Test.sol";
-import {Operand, OPCODE_EXTERN} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {OperandV2, OPCODE_EXTERN} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {
     IInterpreterExternV3,
     ExternDispatch,
@@ -29,7 +29,7 @@ contract LibSubParseSubParserExternTest is Test {
             extern,
             uint256(constantsHeight),
             uint256(outputs) << 4 | uint256(inputs),
-            Operand.wrap(uint256(operandValue)),
+            OperandV2.wrap(uint256(operandValue)),
             uint256(opcodeIndex)
         );
         assertTrue(success);
@@ -44,9 +44,9 @@ contract LibSubParseSubParserExternTest is Test {
         (IInterpreterExternV3 externDecoded, ExternDispatch externDispatchDecoded) =
             LibExtern.decodeExternCall(EncodedExternDispatch.wrap(constants[0]));
         assertEq(address(extern), address(externDecoded));
-        (uint256 opcodeIndexDecoded, Operand operandDecoded) = LibExtern.decodeExternDispatch(externDispatchDecoded);
+        (uint256 opcodeIndexDecoded, OperandV2 operandDecoded) = LibExtern.decodeExternDispatch(externDispatchDecoded);
         assertEq(opcodeIndexDecoded, opcodeIndex);
-        assertEq(Operand.unwrap(operandDecoded), operandValue);
+        assertEq(OperandV2.unwrap(operandDecoded), operandValue);
     }
 
     /// Constants height must be less than 256 or the lib will error.
@@ -64,7 +64,7 @@ contract LibSubParseSubParserExternTest is Test {
             extern,
             constantsHeight,
             uint256(outputsByte) << 4 | uint256(inputsByte),
-            Operand.wrap(uint256(operandValue)),
+            OperandV2.wrap(uint256(operandValue)),
             uint256(opcodeIndex)
         );
         (success, bytecode, constants);

@@ -1,5 +1,5 @@
-// // // SPDX-License-Identifier: CAL
-// // pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // // import {Pointer} from "rain.solmem/lib/LibPointer.sol";
 // // import {LibUint256Array} from "rain.solmem/lib/LibUint256Array.sol";
@@ -15,8 +15,8 @@
 // //     IInterpreterStoreV2, FullyQualifiedNamespace
 // // } from "rain.interpreter.interface/interface/IInterpreterStoreV2.sol";
 // // import {SignedContextV1} from "rain.interpreter.interface/interface/IInterpreterCallerV3.sol";
-// // import {LibIntegrityCheckNP, IntegrityCheckStateNP} from "src/lib/integrity/LibIntegrityCheckNP.sol";
-// // import {LibInterpreterStateNP, InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
+// // import {LibIntegrityCheckNP, IntegrityCheckState} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// // import {LibInterpreterState, InterpreterState} from "src/lib/state/LibInterpreterState.sol";
 // // import {BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 // // import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
@@ -26,7 +26,7 @@
 //     /// Directly test the integrity logic of LibOpAnyNP. This tests the happy
 //     /// path where the operand is valid.
 //     function testOpAnyNPIntegrityHappy(uint8 inputs, uint16 operandData) external pure {
-//         IntegrityCheckStateNP memory state = opTestDefaultIngegrityCheckState();
+//         IntegrityCheckState memory state = opTestDefaultIngegrityCheckState();
 //         inputs = uint8(bound(uint256(inputs), 1, 0x0F));
 //         (uint256 calcInputs, uint256 calcOutputs) =
 //             LibOpAnyNP.integrity(state, LibOperand.build(inputs, 1, operandData));
@@ -38,7 +38,7 @@
 // //     /// Sample the gas cost of the integrity check.
 // //     function testOpAnyNPIntegrityGas0() external {
 // //         vm.pauseGasMetering();
-// //         IntegrityCheckStateNP memory state = IntegrityCheckStateNP(6, 6, 6, new uint256[](3), 9, "");
+// //         IntegrityCheckState memory state = IntegrityCheckState(6, 6, 6, new uint256[](3), 9, "");
 // //         Operand operand = Operand.wrap(0x50000);
 // //         vm.resumeGasMetering();
 // //         // 5 inputs. Any stack index above this is fine for the state.
@@ -50,7 +50,7 @@
 //     /// Directly test the integrity logic of LibOpAnyNP. This tests the unhappy
 //     /// path where the operand is invalid due to 0 inputs.
 //     function testOpAnyNPIntegrityUnhappyZeroInputs() external pure {
-//         IntegrityCheckStateNP memory state = opTestDefaultIngegrityCheckState();
+//         IntegrityCheckState memory state = opTestDefaultIngegrityCheckState();
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpAnyNP.integrity(state, Operand.wrap(0));
 //         // Calc inputs will be minimum 1.
 //         assertEq(calcInputs, 1);
@@ -59,7 +59,7 @@
 
 //     /// Directly test the runtime logic of LibOpAnyNP.
 //     function testOpAnyNPRun(uint256[] memory inputs, uint16 operandData) external view {
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 //         vm.assume(inputs.length != 0);
 //         vm.assume(inputs.length <= 0x0F);
 //         Operand operand = LibOperand.build(uint8(inputs.length), 1, operandData);
@@ -72,8 +72,8 @@
 // //         uint256[][] memory stacks = new uint256[][](1);
 // //         stacks[0] = new uint256[](1);
 // //         Pointer stackTop = stacks[0].dataPointer();
-// //         InterpreterStateNP memory state = InterpreterStateNP(
-// //             LibInterpreterStateNP.stackBottoms(stacks),
+// //         InterpreterState memory state = InterpreterState(
+// //             LibInterpreterState.stackBottoms(stacks),
 // //             new uint256[](0),
 // //             0,
 // //             MemoryKV.wrap(0),

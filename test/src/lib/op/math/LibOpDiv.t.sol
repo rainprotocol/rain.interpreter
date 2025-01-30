@@ -1,10 +1,10 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // import {LibPointer} from "rain.solmem/lib/LibPointer.sol";
 
 // import {Math as OZMath} from "openzeppelin-contracts/contracts/utils/math/Math.sol";
-// import {OpTest, IntegrityCheckStateNP, InterpreterStateNP, Operand, stdError} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, InterpreterState, Operand, stdError} from "test/abstract/OpTest.sol";
 // import {PRBMath_MulDiv_Overflow} from "prb-math/Common.sol";
 // import {LibWillOverflow} from "rain.math.fixedpoint/lib/LibWillOverflow.sol";
 // import {LibOpDiv} from "src/lib/op/math/LibOpDiv.sol";
@@ -13,7 +13,7 @@
 // contract LibOpDivTest is OpTest {
 //     /// Directly test the integrity logic of LibOpDiv. This tests the
 //     /// happy path where the inputs input and calc match.
-//     function testOpDivIntegrityHappy(IntegrityCheckStateNP memory state, uint8 inputs, uint16 operandData)
+//     function testOpDivIntegrityHappy(IntegrityCheckState memory state, uint8 inputs, uint16 operandData)
 //         external
 //         pure
 //     {
@@ -26,7 +26,7 @@
 
 // /// Directly test the integrity logic of LibOpDiv. This tests the
 // /// unhappy path where the operand is invalid due to 0 inputs.
-// function testOpDivIntegrityUnhappyZeroInputs(IntegrityCheckStateNP memory state) external pure {
+// function testOpDivIntegrityUnhappyZeroInputs(IntegrityCheckState memory state) external pure {
 //     (uint256 calcInputs, uint256 calcOutputs) = LibOpDiv.integrity(state, Operand.wrap(0));
 //     // Calc inputs will be minimum 2.
 //     assertEq(calcInputs, 2);
@@ -35,7 +35,7 @@
 
 // /// Directly test the integrity logic of LibOpDiv. This tests the
 // /// unhappy path where the operand is invalid due to 1 inputs.
-// function testOpDivIntegrityUnhappyOneInput(IntegrityCheckStateNP memory state) external pure {
+// function testOpDivIntegrityUnhappyOneInput(IntegrityCheckState memory state) external pure {
 //     (uint256 calcInputs, uint256 calcOutputs) = LibOpDiv.integrity(state, Operand.wrap(0x110000));
 //     // Calc inputs will be minimum 2.
 //     assertEq(calcInputs, 2);
@@ -44,7 +44,7 @@
 
 //     /// Directly test the runtime logic of LibOpDiv.
 //     function testOpDivRun(uint256[] memory inputs) public {
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 //         vm.assume(inputs.length >= 2);
 //         vm.assume(inputs.length <= 0x0F);
 //         Operand operand = LibOperand.build(uint8(inputs.length), 1, 0);

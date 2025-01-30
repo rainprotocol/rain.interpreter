@@ -11,7 +11,7 @@ import {LibBytecode} from "rain.interpreter.interface/lib/bytecode/LibBytecode.s
 import {LibMetaFixture} from "test/lib/parse/LibMetaFixture.sol";
 import {LibParseState, ParseState} from "src/lib/parse/LibParseState.sol";
 import {LibParseLiteral} from "src/lib/parse/literal/LibParseLiteral.sol";
-import {Operand, LibParseOperand} from "src/lib/parse/LibParseOperand.sol";
+import {OperandV2, LibParseOperand} from "src/lib/parse/LibParseOperand.sol";
 import {LibConvert} from "rain.lib.typecast/LibConvert.sol";
 import {LibAllStandardOpsNP} from "src/lib/op/LibAllStandardOpsNP.sol";
 import {LibGenParseMeta} from "rain.sol.codegen/lib/LibGenParseMeta.sol";
@@ -115,8 +115,8 @@ contract LibParseNamedLHSTest is Test {
         meta[2] = AuthoringMetaV2("c", "c");
         bytes memory parseMeta = LibGenParseMeta.buildParseMetaV2(meta, 1);
 
-        function (uint256[] memory) internal pure returns (Operand)[] memory operandHandlers =
-            new function (uint256[] memory) internal pure returns (Operand)[](3);
+        function (uint256[] memory) internal pure returns (OperandV2)[] memory operandHandlers =
+            new function (uint256[] memory) internal pure returns (OperandV2)[](3);
         operandHandlers[0] = LibParseOperand.handleOperandDisallowed;
         operandHandlers[1] = LibParseOperand.handleOperandDisallowed;
         operandHandlers[2] = LibParseOperand.handleOperandSingleFull;

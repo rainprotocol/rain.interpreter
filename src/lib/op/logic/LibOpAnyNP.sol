@@ -1,25 +1,25 @@
 // SPDX-License-Identifier: CAL
 pragma solidity ^0.8.18;
 
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
-import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
+import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
+import {InterpreterState} from "../../state/LibInterpreterState.sol";
 
 /// @title LibOpAnyNP
 /// @notice Opcode to return the first nonzero item on the stack up to the inputs
 /// limit.
 library LibOpAnyNP {
-    function integrity(IntegrityCheckStateNP memory, Operand operand) internal pure returns (uint256, uint256) {
+    function integrity(IntegrityCheckState memory, OperandV2 operand) internal pure returns (uint256, uint256) {
         // There must be at least one input.
-        uint256 inputs = (Operand.unwrap(operand) >> 0x10) & 0x0F;
+        uint256 inputs = uint256((OperandV2.unwrap(operand) >> 0x10) & bytes32(uint256(0x0F)));
         inputs = inputs > 0 ? inputs : 1;
         return (inputs, 1);
     }
 
     /// ANY
     /// ANY is the first nonzero item, else 0.
-    function run(InterpreterStateNP memory, Operand operand, Pointer stackTop) internal pure returns (Pointer) {
+    function run(InterpreterState memory, OperandV2 operand, Pointer stackTop) internal pure returns (Pointer) {
         assembly ("memory-safe") {
             let length := mul(and(shr(0x10, operand), 0x0F), 0x20)
             let cursor := stackTop
@@ -36,7 +36,7 @@ library LibOpAnyNP {
     }
 
     /// Gas intensive reference implementation of ANY for testing.
-    function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory inputs)
+    function referenceFn(InterpreterState memory, OperandV2, uint256[] memory inputs)
         internal
         pure
         returns (uint256[] memory outputs)

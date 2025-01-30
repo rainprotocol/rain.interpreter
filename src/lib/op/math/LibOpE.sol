@@ -1,19 +1,19 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity ^0.8.18;
+// SPDX-License-Identifier: CAL
+pragma solidity ^0.8.18;
 
 // import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-// import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-// import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
-// import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
+// import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+// import {InterpreterState} from "../../state/LibInterpreterState.sol";
+// import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
 
 // /// @title LibOpE
 // /// Stacks the mathematical constant e.
 // library LibOpE {
-//     function integrity(IntegrityCheckStateNP memory, Operand) internal pure returns (uint256, uint256) {
+//     function integrity(IntegrityCheckState memory, Operand) internal pure returns (uint256, uint256) {
 //         return (0, 1);
 //     }
 
-//     function run(InterpreterStateNP memory, Operand, Pointer stackTop) internal pure returns (Pointer) {
+//     function run(InterpreterState memory, Operand, Pointer stackTop) internal pure returns (Pointer) {
 //         uint256 e = FIXED_POINT_E;
 //         assembly ("memory-safe") {
 //             stackTop := sub(stackTop, 0x20)
@@ -22,7 +22,7 @@
 //         return stackTop;
 //     }
 
-//     function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory)
+//     function referenceFn(InterpreterState memory, Operand, uint256[] memory)
 //         internal
 //         pure
 //         returns (uint256[] memory)

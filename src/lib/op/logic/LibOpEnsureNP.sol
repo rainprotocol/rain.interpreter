@@ -2,9 +2,9 @@
 pragma solidity ^0.8.18;
 
 import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
-import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {InterpreterState} from "../../state/LibInterpreterState.sol";
+import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
 import {LibIntOrAString, IntOrAString} from "rain.intorastring/lib/LibIntOrAString.sol";
 
 /// @title LibOpEnsureNP
@@ -12,7 +12,7 @@ import {LibIntOrAString, IntOrAString} from "rain.intorastring/lib/LibIntOrAStri
 library LibOpEnsureNP {
     using LibIntOrAString for IntOrAString;
 
-    function integrity(IntegrityCheckStateNP memory, Operand) internal pure returns (uint256, uint256) {
+    function integrity(IntegrityCheckState memory, OperandV2) internal pure returns (uint256, uint256) {
         // There must be exactly 2 inputs.
         return (2, 0);
     }
@@ -21,7 +21,7 @@ library LibOpEnsureNP {
     /// If the condition is zero, the expression will revert with the given
     /// string.
     /// All conditions are eagerly evaluated and there are no outputs.
-    function run(InterpreterStateNP memory, Operand, Pointer stackTop) internal pure returns (Pointer) {
+    function run(InterpreterState memory, OperandV2, Pointer stackTop) internal pure returns (Pointer) {
         uint256 condition;
         IntOrAString reason;
         assembly ("memory-safe") {
@@ -35,7 +35,7 @@ library LibOpEnsureNP {
     }
 
     /// Gas intensive reference implementation of `ensure` for testing.
-    function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory inputs)
+    function referenceFn(InterpreterState memory, OperandV2, uint256[] memory inputs)
         internal
         pure
         returns (uint256[] memory outputs)

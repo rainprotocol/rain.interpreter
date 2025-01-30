@@ -1,9 +1,9 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // import {LibUint256Array} from "rain.solmem/lib/LibUint256Array.sol";
 
-// import {OpTest, IntegrityCheckStateNP, InterpreterStateNP} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, InterpreterState} from "test/abstract/OpTest.sol";
 // import {LibContext} from "rain.interpreter.interface/lib/caller/LibContext.sol";
 // import {UnexpectedOperand} from "src/error/ErrParse.sol";
 // import {LibOpMin} from "src/lib/op/math/LibOpMin.sol";
@@ -14,7 +14,7 @@
 
 // /// Directly test the integrity logic of LibOpMin. This tests the happy
 // /// path where the inputs input and calc match.
-// function testOpMinIntegrityHappy(IntegrityCheckStateNP memory state, uint8 inputs, uint16 operandData)
+// function testOpMinIntegrityHappy(IntegrityCheckState memory state, uint8 inputs, uint16 operandData)
 //     external
 //     pure
 // {
@@ -27,7 +27,7 @@
 
 // /// Directly test the integrity logic of LibOpMin. This tests the unhappy
 // /// path where the operand is invalid due to 0 inputs.
-// function testOpMinIntegrityUnhappyZeroInputs(IntegrityCheckStateNP memory state) external pure {
+// function testOpMinIntegrityUnhappyZeroInputs(IntegrityCheckState memory state) external pure {
 //     (uint256 calcInputs, uint256 calcOutputs) = LibOpMin.integrity(state, Operand.wrap(0));
 //     // Calc inputs will be minimum 2.
 //     assertEq(calcInputs, 2);
@@ -36,7 +36,7 @@
 
 // /// Directly test the integrity logic of LibOpMin. This tests the unhappy
 // /// path where the operand is invalid due to 1 inputs.
-// function testOpMinIntegrityUnhappyOneInput(IntegrityCheckStateNP memory state) external pure {
+// function testOpMinIntegrityUnhappyOneInput(IntegrityCheckState memory state) external pure {
 //     (uint256 calcInputs, uint256 calcOutputs) = LibOpMin.integrity(state, Operand.wrap(0x010000));
 //     // Calc inputs will be minimum 2.
 //     assertEq(calcInputs, 2);
@@ -45,7 +45,7 @@
 
 // /// Directly test the runtime logic of LibOpMin.
 // function testOpMinRun(uint256[] memory inputs, uint16 operandData) external view {
-//     InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//     InterpreterState memory state = opTestDefaultInterpreterState();
 //     vm.assume(inputs.length >= 2);
 //     vm.assume(inputs.length <= 0x0F);
 //     Operand operand = LibOperand.build(uint8(inputs.length), 1, operandData);

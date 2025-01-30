@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: CAL
 pragma solidity ^0.8.25;
 
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {LibSubParse} from "../../../parse/LibSubParse.sol";
 import {IInterpreterExternV3} from "rain.interpreter.interface/interface/IInterpreterExternV3.sol";
 
@@ -13,12 +13,12 @@ import {IInterpreterExternV3} from "rain.interpreter.interface/interface/IInterp
 /// implement constants, and handling operands in the sub parser.
 library LibExternOpStackOperandNPE2 {
     //slither-disable-next-line dead-code
-    function subParser(uint256 constantsHeight, uint256, Operand operand)
+    function subParser(uint256 constantsHeight, uint256, OperandV2 operand)
         internal
         pure
-        returns (bool, bytes memory, uint256[] memory)
+        returns (bool, bytes memory, bytes32[] memory)
     {
         //slither-disable-next-line unused-return
-        return LibSubParse.subParserConstant(constantsHeight, Operand.unwrap(operand));
+        return LibSubParse.subParserConstant(constantsHeight, OperandV2.unwrap(operand));
     }
 }

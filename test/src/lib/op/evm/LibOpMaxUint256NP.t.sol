@@ -3,14 +3,14 @@ pragma solidity =0.8.25;
 
 import {OpTest} from "test/abstract/OpTest.sol";
 import {LibOpMaxUint256NP} from "src/lib/op/evm/LibOpMaxUint256NP.sol";
-import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 import {
     IInterpreterV4,
-    Operand,
+    OperandV2,
     SourceIndexV2,
     FullyQualifiedNamespace
 } from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-import {InterpreterStateNP, LibInterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
+import {InterpreterState, LibInterpreterState} from "src/lib/state/LibInterpreterState.sol";
 import {LibContext} from "rain.interpreter.interface/lib/caller/LibContext.sol";
 import {IInterpreterStoreV2} from "rain.interpreter.interface/interface/IInterpreterStoreV2.sol";
 import {SignedContextV1} from "rain.interpreter.interface/interface/IInterpreterCallerV3.sol";
@@ -19,11 +19,11 @@ import {LibOperand} from "test/lib/operand/LibOperand.sol";
 /// @title LibOpMaxUint256NPTest
 /// @notice Test the runtime and integrity time logic of LibOpMaxUint256NP.
 contract LibOpMaxUint256NPTest is OpTest {
-    using LibInterpreterStateNP for InterpreterStateNP;
+    using LibInterpreterState for InterpreterState;
 
     /// Directly test the integrity logic of LibOpMaxUint256NP.
     function testOpMaxUint256NPIntegrity(
-        IntegrityCheckStateNP memory state,
+        IntegrityCheckState memory state,
         uint8 inputs,
         uint8 outputs,
         uint16 operandData
@@ -40,9 +40,9 @@ contract LibOpMaxUint256NPTest is OpTest {
     /// Directly test the runtime logic of LibOpMaxUint256NP. This tests that the
     /// opcode correctly pushes the max uint256 onto the stack.
     function testOpMaxUint256NPRun() external view {
-        InterpreterStateNP memory state = opTestDefaultInterpreterState();
+        InterpreterState memory state = opTestDefaultInterpreterState();
         uint256[] memory inputs = new uint256[](0);
-        Operand operand = LibOperand.build(0, 1, 0);
+        OperandV2 operand = LibOperand.build(0, 1, 0);
         opReferenceCheck(
             state, operand, LibOpMaxUint256NP.referenceFn, LibOpMaxUint256NP.integrity, LibOpMaxUint256NP.run, inputs
         );

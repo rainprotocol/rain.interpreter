@@ -4,9 +4,9 @@ pragma solidity ^0.8.18;
 import {OpTest} from "test/abstract/OpTest.sol";
 
 import {NotAnExternContract} from "src/error/ErrExtern.sol";
-import {IntegrityCheckStateNP} from "src/lib/integrity/LibIntegrityCheckNP.sol";
-import {InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {IntegrityCheckState} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+import {InterpreterState} from "src/lib/state/LibInterpreterState.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {LibOpExternNP} from "src/lib/op/00/LibOpExternNP.sol";
 import {LibExtern} from "src/lib/extern/LibExtern.sol";
 import {
@@ -44,7 +44,7 @@ contract LibOpExternNPTest is OpTest {
     }
 
     function testOpExternNPIntegrityHappy(
-        IntegrityCheckStateNP memory state,
+        IntegrityCheckState memory state,
         IInterpreterExternV3 extern,
         uint16 constantIndex,
         uint8 inputs,
@@ -60,7 +60,7 @@ contract LibOpExternNPTest is OpTest {
         vm.assume(state.constants.length > 0);
         constantIndex = uint16(bound(constantIndex, 0, state.constants.length - 1));
 
-        Operand operand = LibOperand.build(inputs, outputs, constantIndex);
+        OperandV2 operand = LibOperand.build(inputs, outputs, constantIndex);
         ExternDispatch externDispatch = LibExtern.encodeExternDispatch(0, operand);
         EncodedExternDispatch encodedExternDispatch = LibExtern.encodeExternCall(extern, externDispatch);
         state.constants[constantIndex] = EncodedExternDispatch.unwrap(encodedExternDispatch);
@@ -83,7 +83,7 @@ contract LibOpExternNPTest is OpTest {
     }
 
     function testOpExternNPIntegrityNotAnExternContract(
-        IntegrityCheckStateNP memory state,
+        IntegrityCheckState memory state,
         IInterpreterExternV3 extern,
         uint16 constantIndex,
         uint8 inputs,
@@ -115,7 +115,7 @@ contract LibOpExternNPTest is OpTest {
         vm.assume(state.constants.length > 0);
         constantIndex = uint16(bound(constantIndex, 0, state.constants.length - 1));
 
-        Operand operand = LibOperand.build(inputs, outputs, constantIndex);
+        OperandV2 operand = LibOperand.build(inputs, outputs, constantIndex);
         ExternDispatch externDispatch = LibExtern.encodeExternDispatch(0, operand);
         EncodedExternDispatch encodedExternDispatch = LibExtern.encodeExternCall(extern, externDispatch);
         state.constants[constantIndex] = EncodedExternDispatch.unwrap(encodedExternDispatch);
@@ -126,7 +126,7 @@ contract LibOpExternNPTest is OpTest {
 
     /// This needs to be exposed externally so that mocks and reverts play nice
     /// with each other.
-    function externalIntegrity(IntegrityCheckStateNP memory state, Operand operand)
+    function externalIntegrity(IntegrityCheckState memory state, OperandV2 operand)
         external
         view
         returns (uint256, uint256)
@@ -150,7 +150,7 @@ contract LibOpExternNPTest is OpTest {
             outputs.truncate(0x0F);
         }
 
-        InterpreterStateNP memory state = opTestDefaultInterpreterState();
+        InterpreterState memory state = opTestDefaultInterpreterState();
         state.constants = constants;
 
         assumeEtchable(address(extern));
@@ -159,7 +159,7 @@ contract LibOpExternNPTest is OpTest {
 
         constantIndex = uint16(bound(constantIndex, 0, state.constants.length - 1));
 
-        Operand operand = LibOperand.build(uint8(inputs.length), uint8(outputs.length), constantIndex);
+        OperandV2 operand = LibOperand.build(uint8(inputs.length), uint8(outputs.length), constantIndex);
         ExternDispatch externDispatch = LibExtern.encodeExternDispatch(0, operand);
         EncodedExternDispatch encodedExternDispatch = LibExtern.encodeExternCall(extern, externDispatch);
         state.constants[constantIndex] = EncodedExternDispatch.unwrap(encodedExternDispatch);
@@ -190,7 +190,7 @@ contract LibOpExternNPTest is OpTest {
         IInterpreterExternV3 extern = IInterpreterExternV3(address(0xdeadbeef));
         vm.etch(address(extern), hex"fe");
         uint256 opcode = 5;
-        Operand operand = Operand.wrap(0x10);
+        OperandV2 operand = OperandV2.wrap(0x10);
 
         ExternDispatch externDispatch = LibExtern.encodeExternDispatch(opcode, operand);
         assertEq(
@@ -243,7 +243,7 @@ contract LibOpExternNPTest is OpTest {
         IInterpreterExternV3 extern = IInterpreterExternV3(address(0xdeadbeef));
         vm.etch(address(extern), hex"fe");
         uint256 opcode = 5;
-        Operand operand = Operand.wrap(0x10);
+        OperandV2 operand = OperandV2.wrap(0x10);
 
         ExternDispatch externDispatch = LibExtern.encodeExternDispatch(opcode, operand);
         assertEq(

@@ -2,21 +2,21 @@
 pragma solidity ^0.8.18;
 
 import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
-import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {InterpreterState} from "../../state/LibInterpreterState.sol";
+import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
 
 /// @title LibOpHashNP
 /// Implementation of keccak256 hashing as a standard Rainlang opcode.
 library LibOpHashNP {
-    function integrity(IntegrityCheckStateNP memory, Operand operand) internal pure returns (uint256, uint256) {
+    function integrity(IntegrityCheckState memory, OperandV2 operand) internal pure returns (uint256, uint256) {
         // Any number of inputs are valid.
         // 0 inputs will be the hash of empty (0 length) bytes.
-        uint256 inputs = (Operand.unwrap(operand) >> 0x10) & 0x0F;
+        uint256 inputs = uint256((OperandV2.unwrap(operand) >> 0x10) & bytes32(uint256(0x0F)));
         return (inputs, 1);
     }
 
-    function run(InterpreterStateNP memory, Operand operand, Pointer stackTop) internal pure returns (Pointer) {
+    function run(InterpreterState memory, OperandV2 operand, Pointer stackTop) internal pure returns (Pointer) {
         assembly ("memory-safe") {
             let length := mul(and(shr(0x10, operand), 0x0F), 0x20)
             let value := keccak256(stackTop, length)
@@ -26,7 +26,7 @@ library LibOpHashNP {
         return stackTop;
     }
 
-    function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory inputs)
+    function referenceFn(InterpreterState memory, OperandV2, uint256[] memory inputs)
         internal
         pure
         returns (uint256[] memory outputs)

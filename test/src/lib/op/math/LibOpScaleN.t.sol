@@ -1,7 +1,7 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
-// import {OpTest, IntegrityCheckStateNP, InterpreterStateNP, Operand, stdError} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, InterpreterState, Operand, stdError} from "test/abstract/OpTest.sol";
 // import {LibWillOverflow} from "rain.math.fixedpoint/lib/LibWillOverflow.sol";
 // import {LibOpScaleN} from "src/lib/op/math/LibOpScaleN.sol";
 // import {LibOperand} from "test/lib/operand/LibOperand.sol";
@@ -9,7 +9,7 @@
 // contract LibOpScaleNTest is OpTest {
 //     /// Directly test the integrity logic of LibOpScaleN.
 //     /// Inputs are always 1, outputs are always 1.
-//     function testOpScaleNIntegrity(IntegrityCheckStateNP memory state, uint8 inputs, uint16 op) external pure {
+//     function testOpScaleNIntegrity(IntegrityCheckState memory state, uint8 inputs, uint16 op) external pure {
 //         inputs = uint8(bound(inputs, 1, 0x0F));
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpScaleN.integrity(state, LibOperand.build(inputs, 1, op));
 //         assertEq(calcInputs, 1);
@@ -22,7 +22,7 @@
 //         round = bound(round, 0, 1);
 //         saturate = bound(saturate, 0, 1);
 //         uint256 flags = round | (saturate << 1);
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 
 //         Operand operand = LibOperand.build(1, 1, uint16((flags << 8) | scale));
 

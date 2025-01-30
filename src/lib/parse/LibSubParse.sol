@@ -7,18 +7,15 @@ import {
     OPCODE_EXTERN,
     OPCODE_CONSTANT,
     OPCODE_CONTEXT,
-    Operand
+    OperandV2
 } from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {LibBytecode, Pointer} from "rain.interpreter.interface/lib/bytecode/LibBytecode.sol";
-import {ISubParserV3, COMPATIBILITY_V5} from "rain.interpreter.interface/interface/ISubParserV3.sol";
+import {ISubParserV4} from "rain.interpreter.interface/interface/unstable/ISubParserV4.sol";
 import {BadSubParserResult, UnknownWord, UnsupportedLiteralType} from "../../error/ErrParse.sol";
-import {LibExtern, EncodedExternDispatch} from "../extern/LibExtern.sol";
-import {IInterpreterExternV3} from "rain.interpreter.interface/interface/IInterpreterExternV3.sol";
+import {IInterpreterExternV4, LibExtern, EncodedExternDispatchV2} from "../extern/LibExtern.sol";
 import {ExternDispatchConstantsHeightOverflow} from "../../error/ErrSubParse.sol";
 import {LibMemCpy} from "rain.solmem/lib/LibMemCpy.sol";
 import {LibParseError} from "./LibParseError.sol";
-
-bytes32 constant CURRENT_COMPATIBILITY = COMPATIBILITY_V5;
 
 library LibSubParse {
     using LibParseState for ParseState;
@@ -28,7 +25,7 @@ library LibSubParse {
     function subParserContext(uint256 column, uint256 row)
         internal
         pure
-        returns (bool, bytes memory, uint256[] memory)
+        returns (bool, bytes memory, bytes32[] memory)
     {
         bytes memory bytecode;
         uint256 opIndex = OPCODE_CONTEXT;
@@ -52,7 +49,7 @@ library LibSubParse {
             mstore(bytecode, 4)
         }
 
-        uint256[] memory constants;
+        bytes32[] memory constants;
         assembly ("memory-safe") {
             constants := mload(0x40)
             mstore(0x40, add(constants, 0x20))
@@ -64,10 +61,10 @@ library LibSubParse {
 
     /// Sub parse a value into the bytecode that will run on the interpreter to
     /// push the given value onto the stack, using the constant opcode at eval.
-    function subParserConstant(uint256 constantsHeight, uint256 value)
+    function subParserConstant(uint256 constantsHeight, bytes32 value)
         internal
         pure
-        returns (bool, bytes memory, uint256[] memory)
+        returns (bool, bytes memory, bytes32[] memory)
     {
         // Build a constant opcode that the interpreter will run itself.
         bytes memory bytecode;
@@ -95,7 +92,7 @@ library LibSubParse {
             mstore(bytecode, 4)
         }
 
-        uint256[] memory constants;
+        bytes32[] memory constants;
         assembly ("memory-safe") {
             constants := mload(0x40)
             mstore(0x40, add(constants, 0x40))
@@ -112,12 +109,12 @@ library LibSubParse {
     /// implies the parse meta has been traversed and the parse index has been
     /// mapped to an extern opcode index somehow.
     function subParserExtern(
-        IInterpreterExternV3 extern,
+        IInterpreterExternV4 extern,
         uint256 constantsHeight,
         uint256 ioByte,
-        Operand operand,
+        OperandV2 operand,
         uint256 opcodeIndex
-    ) internal pure returns (bool, bytes memory, uint256[] memory) {
+    ) internal pure returns (bool, bytes memory, bytes32[] memory) {
         // The constants height is an error check because the main parser can
         // provide two bytes for it. Everything else is expected to be more
         // directly controlled by the subparser itself.
@@ -142,11 +139,11 @@ library LibSubParse {
             mstore(bytecode, 4)
         }
 
-        uint256 externDispatch = EncodedExternDispatch.unwrap(
+        bytes32 externDispatch = EncodedExternDispatchV2.unwrap(
             LibExtern.encodeExternCall(extern, LibExtern.encodeExternDispatch(opcodeIndex, operand))
         );
 
-        uint256[] memory constants;
+        bytes32[] memory constants;
         assembly ("memory-safe") {
             constants := mload(0x40)
             mstore(0x40, add(constants, 0x40))
@@ -165,9 +162,9 @@ library LibSubParse {
                     memoryAtCursor := mload(cursor)
                 }
                 if (memoryAtCursor >> 0xf8 == OPCODE_UNKNOWN) {
-                    uint256 deref = state.subParsers;
+                    bytes32 deref = state.subParsers;
                     while (deref != 0) {
-                        ISubParserV3 subParser = ISubParserV3(address(uint160(deref)));
+                        ISubParserV4 subParser = ISubParserV4(address(bytes20(deref)));
                         assembly ("memory-safe") {
                             deref := mload(shr(0xf0, deref))
                         }
@@ -204,8 +201,8 @@ library LibSubParse {
                             }
                         }
 
-                        (bool success, bytes memory subBytecode, uint256[] memory subConstants) =
-                            subParser.subParseWord(CURRENT_COMPATIBILITY, data);
+                        (bool success, bytes memory subBytecode, bytes32[] memory subConstants) =
+                            subParser.subParseWord2(data);
                         if (success) {
                             // The sub bytecode must be exactly 4 bytes to
                             // represent an op.
@@ -261,7 +258,7 @@ library LibSubParse {
     function subParseWords(ParseState memory state, bytes memory bytecode)
         internal
         view
-        returns (bytes memory, uint256[] memory)
+        returns (bytes memory, bytes32[] memory)
     {
         unchecked {
             uint256 sourceCount = LibBytecode.sourceCount(bytecode);
@@ -281,7 +278,7 @@ library LibSubParse {
         uint256 dispatchEnd,
         uint256 bodyStart,
         uint256 bodyEnd
-    ) internal view returns (uint256) {
+    ) internal view returns (bytes32) {
         unchecked {
             // Build the data for the subparser.
             bytes memory data;
@@ -305,14 +302,14 @@ library LibSubParse {
                 );
             }
 
-            uint256 deref = state.subParsers;
+            bytes32 deref = state.subParsers;
             while (deref != 0) {
-                ISubParserV3 subParser = ISubParserV3(address(uint160(deref)));
+                ISubParserV4 subParser = ISubParserV4(address(bytes20(deref)));
                 assembly ("memory-safe") {
                     deref := mload(shr(0xf0, deref))
                 }
 
-                (bool success, uint256 value) = subParser.subParseLiteral(CURRENT_COMPATIBILITY, data);
+                (bool success, bytes32 value) = subParser.subParseLiteral2(data);
                 if (success) {
                     return value;
                 }
@@ -327,7 +324,7 @@ library LibSubParse {
         pure
         returns (uint256 constantsHeight, uint256 ioByte, ParseState memory state)
     {
-        uint256[] memory operandValues;
+        bytes32[] memory operandValues;
         assembly ("memory-safe") {
             // Pull the header out into EVM stack items.
             constantsHeight := and(mload(add(data, 2)), 0xFFFF)

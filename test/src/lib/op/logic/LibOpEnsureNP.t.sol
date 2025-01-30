@@ -1,18 +1,18 @@
-// // // SPDX-License-Identifier: CAL
-// // pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // // import {OpTest, UnexpectedOperand} from "test/abstract/OpTest.sol";
 // // import {LibContext} from "rain.interpreter.interface/lib/caller/LibContext.sol";
 // // import {ExcessRHSItems} from "src/lib/parse/LibParse.sol";
 // // import {LibOpEnsureNP} from "src/lib/op/logic/LibOpEnsureNP.sol";
-// // import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// // import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 // // import {
 // //     IInterpreterV4,
 // //     Operand,
 // //     SourceIndexV2,
 // //     FullyQualifiedNamespace
 // // } from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-// // import {InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
+// // import {InterpreterState} from "src/lib/state/LibInterpreterState.sol";
 // // import {LibIntOrAString, IntOrAString} from "rain.intorastring/src/lib/LibIntOrAString.sol";
 // // import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
@@ -20,7 +20,7 @@
 //     /// Directly test the integrity logic of LibOpEnsureNP. This tests the
 //     /// happy path where there is at least one input.
 //     function testOpEnsureNPIntegrityHappy(
-//         IntegrityCheckStateNP memory state,
+//         IntegrityCheckState memory state,
 //         uint8 inputs,
 //         uint8 outputs,
 //         uint16 operandData
@@ -35,7 +35,7 @@
 
 //     /// Directly test the integrity logic of LibOpEnsureNP. This tests the
 //     /// unhappy path where there are no inputs.
-//     function testOpEnsureNPIntegrityUnhappy(IntegrityCheckStateNP memory state) external pure {
+//     function testOpEnsureNPIntegrityUnhappy(IntegrityCheckState memory state) external pure {
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpEnsureNP.integrity(state, Operand.wrap(0));
 //         assertEq(calcInputs, 2);
 //         assertEq(calcOutputs, 0);
@@ -44,7 +44,7 @@
 // //     /// Directly test the run logic of LibOpEnsureNP.
 // //     function testOpEnsureNPRun(uint256 condition, string memory reason) external {
 // //         vm.assume(bytes(reason).length <= 31);
-// //         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+// //         InterpreterState memory state = opTestDefaultInterpreterState();
 // //         uint256[] memory inputs = new uint256[](2);
 // //         inputs[0] = condition;
 // //         inputs[1] = IntOrAString.unwrap(LibIntOrAString.fromString2(reason));

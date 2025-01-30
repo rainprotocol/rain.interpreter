@@ -1,7 +1,7 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
-// import {OpTest, IntegrityCheckStateNP, InterpreterStateNP, Operand, stdError} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, InterpreterState, Operand, stdError} from "test/abstract/OpTest.sol";
 // import {LibWillOverflow} from "rain.math.fixedpoint/lib/LibWillOverflow.sol";
 // import {LibOpScale18} from "src/lib/op/math/LibOpScale18.sol";
 // import {LibOperand} from "test/lib/operand/LibOperand.sol";
@@ -9,7 +9,7 @@
 // contract LibOpScale18Test is OpTest {
 //     /// Directly test the integrity logic of LibOpScale18.
 //     /// Inputs are always 1, outputs are always 1.
-//     function testOpScale18Integrity(IntegrityCheckStateNP memory state, uint8 inputs, uint16 op) external pure {
+//     function testOpScale18Integrity(IntegrityCheckState memory state, uint8 inputs, uint16 op) external pure {
 //         inputs = uint8(bound(inputs, 1, 0x0F));
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpScale18.integrity(state, LibOperand.build(inputs, 1, op));
 //         assertEq(calcInputs, 1);
@@ -22,7 +22,7 @@
 //         round = bound(round, 0, 1);
 //         saturate = bound(saturate, 0, 1);
 //         uint256 flags = round | (saturate << 1);
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 
 //         Operand operand = LibOperand.build(1, 1, uint16((flags << 8) | scale));
 //         uint256[] memory inputs = new uint256[](1);

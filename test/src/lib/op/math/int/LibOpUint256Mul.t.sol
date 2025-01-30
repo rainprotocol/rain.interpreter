@@ -1,14 +1,14 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
-// import {OpTest, IntegrityCheckStateNP, Operand, InterpreterStateNP, stdError} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, Operand, InterpreterState, stdError} from "test/abstract/OpTest.sol";
 // import {LibOpUint256Mul} from "src/lib/op/math/uint256/LibOpUint256Mul.sol";
 // import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
 // contract LibOpUint256MulTest is OpTest {
 //     /// Directly test the integrity logic of LibOpUint256Mul. This tests the happy
 //     /// path where the inputs input and calc match.
-//     function testOpUint256MulIntegrityHappy(IntegrityCheckStateNP memory state, uint8 inputs, uint16 operandData)
+//     function testOpUint256MulIntegrityHappy(IntegrityCheckState memory state, uint8 inputs, uint16 operandData)
 //         external
 //         pure
 //     {
@@ -22,7 +22,7 @@
 
 // /// Directly test the integrity logic of LibOpUint256Mul. This tests the unhappy
 // /// path where the operand is invalid due to 0 inputs.
-// function testOpUint256MulIntegrityUnhappyZeroInputs(IntegrityCheckStateNP memory state) external pure {
+// function testOpUint256MulIntegrityUnhappyZeroInputs(IntegrityCheckState memory state) external pure {
 //     (uint256 calcInputs, uint256 calcOutputs) = LibOpUint256Mul.integrity(state, Operand.wrap(0));
 //     // Calc inputs will be minimum 2.
 //     assertEq(calcInputs, 2);
@@ -31,7 +31,7 @@
 
 // /// Directly test the integrity logic of LibOpUint256Mul. This tests the unhappy
 // /// path where the operand is invalid due to 1 inputs.
-// function testOpUint256MulIntegrityUnhappyOneInput(IntegrityCheckStateNP memory state) external pure {
+// function testOpUint256MulIntegrityUnhappyOneInput(IntegrityCheckState memory state) external pure {
 //     (uint256 calcInputs, uint256 calcOutputs) = LibOpUint256Mul.integrity(state, Operand.wrap(0x010000));
 //     // Calc inputs will be minimum 2.
 //     assertEq(calcInputs, 2);
@@ -40,7 +40,7 @@
 
 //     /// Directly test the runtime logic of LibOpUint256Mul.
 //     function testOpUint256MulRun(uint256[] memory inputs) external {
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 //         vm.assume(inputs.length >= 2);
 //         vm.assume(inputs.length <= 0x0F);
 //         Operand operand = LibOperand.build(uint8(inputs.length), 1, 0);

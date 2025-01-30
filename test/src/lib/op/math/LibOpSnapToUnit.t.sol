@@ -1,14 +1,14 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
-// import {OpTest, IntegrityCheckStateNP, Operand, InterpreterStateNP, UnexpectedOperand} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, Operand, InterpreterState, UnexpectedOperand} from "test/abstract/OpTest.sol";
 // import {LibOpSnapToUnit} from "src/lib/op/math/LibOpSnapToUnit.sol";
 // import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
 // contract LibOpSnapToUnitTest is OpTest {
 //     /// Directly test the integrity logic of LibOpSnapToUnit.
 //     /// Inputs are always 2, outputs are always 1.
-//     function testOpSnapToUnitIntegrity(IntegrityCheckStateNP memory state, Operand operand) external pure {
+//     function testOpSnapToUnitIntegrity(IntegrityCheckState memory state, Operand operand) external pure {
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpSnapToUnit.integrity(state, operand);
 //         assertEq(calcInputs, 2);
 //         assertEq(calcOutputs, 1);
@@ -16,7 +16,7 @@
 
 //     /// Directly test the runtime logic of LibOpSnapToUnit.
 //     function testOpSnapToUnitRun(uint256 threshold, uint256 value) public view {
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 //         value = bound(value, 0, type(uint64).max - 1e18);
 
 //         Operand operand = LibOperand.build(2, 1, 0);

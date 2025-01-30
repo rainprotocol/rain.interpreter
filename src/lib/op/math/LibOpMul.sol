@@ -1,20 +1,20 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity ^0.8.18;
+// SPDX-License-Identifier: CAL
+pragma solidity ^0.8.18;
 
 // /// Used for reference implementation so that we have two independent
 // /// upstreams to compare against.
 // import {Math as OZMath} from "openzeppelin-contracts/contracts/utils/math/Math.sol";
 // import {UD60x18, mul} from "prb-math/UD60x18.sol";
-// import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+// import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 // import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-// import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
-// import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
+// import {InterpreterState} from "../../state/LibInterpreterState.sol";
+// import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
 // import {LibWillOverflow} from "rain.math.fixedpoint/lib/LibWillOverflow.sol";
 
 // /// @title LibOpMul
 // /// @notice Opcode to mul N 18 decimal fixed point values. Errors on overflow.
 // library LibOpMul {
-//     function integrity(IntegrityCheckStateNP memory, Operand operand) internal pure returns (uint256, uint256) {
+//     function integrity(IntegrityCheckState memory, Operand operand) internal pure returns (uint256, uint256) {
 //         // There must be at least two inputs.
 //         uint256 inputs = (Operand.unwrap(operand) >> 0x10) & 0x0F;
 //         inputs = inputs > 1 ? inputs : 2;
@@ -24,7 +24,7 @@
 //     /// mul
 //     /// 18 decimal fixed point multiplication with implied overflow checks from
 //     /// PRB Math.
-//     function run(InterpreterStateNP memory, Operand operand, Pointer stackTop) internal pure returns (Pointer) {
+//     function run(InterpreterState memory, Operand operand, Pointer stackTop) internal pure returns (Pointer) {
 //         uint256 a;
 //         uint256 b;
 //         assembly ("memory-safe") {
@@ -56,7 +56,7 @@
 //     }
 
 //     /// Gas intensive reference implementation of multiplication for testing.
-//     function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory inputs)
+//     function referenceFn(InterpreterState memory, Operand, uint256[] memory inputs)
 //         internal
 //         pure
 //         returns (uint256[] memory outputs)

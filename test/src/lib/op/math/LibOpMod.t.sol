@@ -1,9 +1,9 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // import {LibUint256Array} from "rain.solmem/lib/LibUint256Array.sol";
 
-// import {OpTest, IntegrityCheckStateNP, InterpreterStateNP, Operand, stdError} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, InterpreterState, Operand, stdError} from "test/abstract/OpTest.sol";
 // import {LibContext} from "rain.interpreter.interface/lib/caller/LibContext.sol";
 // import {UnexpectedOperand} from "src/error/ErrParse.sol";
 // import {LibOpMod} from "src/lib/op/math/LibOpMod.sol";
@@ -14,7 +14,7 @@
 
 // /// Directly test the integrity logic of LibOpMod. This tests the happy
 // /// path where the inputs input and calc match.
-// function testOpModIntegrityHappy(IntegrityCheckStateNP memory state, uint8 inputs, uint16 operandData)
+// function testOpModIntegrityHappy(IntegrityCheckState memory state, uint8 inputs, uint16 operandData)
 //     external
 //     pure
 // {
@@ -27,7 +27,7 @@
 
 // /// Directly test the integrity logic of LibOpMod. This tests the unhappy
 // /// path where the operand is invalid due to 0 inputs.
-// function testOpModIntegrityUnhappyZeroInputs(IntegrityCheckStateNP memory state) external pure {
+// function testOpModIntegrityUnhappyZeroInputs(IntegrityCheckState memory state) external pure {
 //     (uint256 calcInputs, uint256 calcOutputs) = LibOpMod.integrity(state, Operand.wrap(0));
 //     // Calc inputs will be minimum 2.
 //     assertEq(calcInputs, 2);
@@ -36,7 +36,7 @@
 
 // /// Directly test the integrity logic of LibOpMod. This tests the unhappy
 // /// path where the operand is invalid due to 1 inputs.
-// function testOpModIntegrityUnhappyOneInput(IntegrityCheckStateNP memory state) external pure {
+// function testOpModIntegrityUnhappyOneInput(IntegrityCheckState memory state) external pure {
 //     (uint256 calcInputs, uint256 calcOutputs) = LibOpMod.integrity(state, Operand.wrap(0x010000));
 //     // Calc inputs will be minimum 2.
 //     assertEq(calcInputs, 2);
@@ -45,7 +45,7 @@
 
 //     /// Directly test the runtime logic of LibOpMod.
 //     function testOpModRun(uint256[] memory inputs) external {
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 //         vm.assume(inputs.length >= 2);
 //         vm.assume(inputs.length <= 0x0F);
 //         Operand operand = LibOperand.build(uint8(inputs.length), 1, 0);

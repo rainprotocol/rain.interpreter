@@ -25,7 +25,9 @@ import {LibCtPop} from "rain.math.binary/lib/LibCtPop.sol";
 import {LibParseMeta} from "rain.interpreter.interface/lib/parse/LibParseMeta.sol";
 import {LibParseLiteral} from "./literal/LibParseLiteral.sol";
 import {LibParseOperand} from "./LibParseOperand.sol";
-import {Operand, OPCODE_STACK, OPCODE_UNKNOWN} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {
+    OperandV2, OPCODE_STACK, OPCODE_UNKNOWN
+} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {LibParseStackName} from "./LibParseStackName.sol";
 import {
     ExcessLHSItems,
@@ -63,6 +65,7 @@ import {LibParseError} from "./LibParseError.sol";
 import {LibSubParse} from "./LibSubParse.sol";
 import {LibBytes} from "rain.solmem/lib/LibBytes.sol";
 import {LibUint256Array} from "rain.solmem/lib/LibUint256Array.sol";
+import {LibBytes32Array} from "rain.solmem/lib/LibBytes32Array.sol";
 
 uint256 constant NOT_LOW_16_BIT_MASK = ~uint256(0xFFFF);
 uint256 constant ACTIVE_SOURCE_MASK = NOT_LOW_16_BIT_MASK;
@@ -81,6 +84,7 @@ library LibParse {
     using LibSubParse for ParseState;
     using LibBytes for bytes;
     using LibUint256Array for uint256[];
+    using LibBytes32Array for bytes32[];
 
     /// Parses a word that matches a tail mask between cursor and end. The caller
     /// has several responsibilities while safely using this word.
@@ -207,7 +211,7 @@ library LibParse {
                     (bool exists, uint256 opcodeIndex) = LibParseMeta.lookupWord(state.meta, word);
                     if (exists) {
                         cursor = state.parseOperand(cursor, end);
-                        Operand operand = state.handleOperand(opcodeIndex);
+                        OperandV2 operand = state.handleOperand(opcodeIndex);
                         state.pushOpToSource(opcodeIndex, operand);
                         // This is a real word so we expect to see parens
                         // after it.
@@ -217,14 +221,14 @@ library LibParse {
                     else {
                         (exists, opcodeIndex) = state.stackNameIndex(word);
                         if (exists) {
-                            state.pushOpToSource(OPCODE_STACK, Operand.wrap(opcodeIndex));
+                            state.pushOpToSource(OPCODE_STACK, OperandV2.wrap(bytes32(opcodeIndex)));
                             // Need to process highwater here because we
                             // don't have any parens to open or close.
                             state.highwater();
                         }
                         // Fallback to sub parsing.
                         else {
-                            Operand operand;
+                            OperandV2 operand;
                             bytes memory subParserBytecode;
 
                             {
@@ -393,7 +397,7 @@ library LibParse {
         }
     }
 
-    function parse(ParseState memory state) internal view returns (bytes memory bytecode, uint256[] memory) {
+    function parse(ParseState memory state) internal view returns (bytes memory bytecode, bytes32[] memory) {
         unchecked {
             if (state.data.length > 0) {
                 uint256 cursor = Pointer.unwrap(state.data.dataPointer());

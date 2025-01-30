@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: CAL
 pragma solidity ^0.8.18;
 
-import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
+import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {InterpreterState} from "../../state/LibInterpreterState.sol";
 import {Pointer} from "rain.solmem/lib/LibPointer.sol";
 import {UnsupportedBitwiseShiftAmount} from "../../../error/ErrBitwise.sol";
 
@@ -12,8 +12,8 @@ import {UnsupportedBitwiseShiftAmount} from "../../../error/ErrBitwise.sol";
 /// operand so it is compile time constant.
 library LibOpShiftBitsRightNP {
     /// Shift bits right by the amount specified in the operand.
-    function integrity(IntegrityCheckStateNP memory, Operand operand) internal pure returns (uint256, uint256) {
-        uint256 shiftAmount = Operand.unwrap(operand) & 0xFFFF;
+    function integrity(IntegrityCheckState memory, OperandV2 operand) internal pure returns (uint256, uint256) {
+        uint256 shiftAmount = uint256(OperandV2.unwrap(operand) & bytes32(uint256(0xFFFF)));
 
         if (
             // Shift amount must not result in the output always being 0.
@@ -29,7 +29,7 @@ library LibOpShiftBitsRightNP {
     }
 
     /// Shift bits right by the amount specified in the operand.
-    function run(InterpreterStateNP memory, Operand operand, Pointer stackTop) internal pure returns (Pointer) {
+    function run(InterpreterState memory, OperandV2 operand, Pointer stackTop) internal pure returns (Pointer) {
         assembly ("memory-safe") {
             mstore(stackTop, shr(and(operand, 0xFF), mload(stackTop)))
         }
@@ -37,12 +37,12 @@ library LibOpShiftBitsRightNP {
     }
 
     /// Reference implementation for shifting bits right.
-    function referenceFn(InterpreterStateNP memory, Operand operand, uint256[] memory inputs)
+    function referenceFn(InterpreterState memory, OperandV2 operand, uint256[] memory inputs)
         internal
         pure
         returns (uint256[] memory)
     {
-        uint256 shiftAmount = Operand.unwrap(operand) & 0xFFFF;
+        uint256 shiftAmount = uint256(OperandV2.unwrap(operand) & bytes32(uint256(0xFFFF)));
         inputs[0] = inputs[0] >> shiftAmount;
         return inputs;
     }

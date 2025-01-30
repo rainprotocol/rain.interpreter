@@ -13,28 +13,28 @@ import {
 } from "../../error/ErrIntegrity.sol";
 import {IInterpreterV4, SourceIndexV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {LibBytecode} from "rain.interpreter.interface/lib/bytecode/LibBytecode.sol";
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {IInterpreterStoreV2, StateNamespace} from "rain.interpreter.interface/interface/IInterpreterStoreV2.sol";
 import {BadOpInputsLength} from "../../lib/integrity/LibIntegrityCheckNP.sol";
 
-struct IntegrityCheckStateNP {
+struct IntegrityCheckState {
     uint256 stackIndex;
     uint256 stackMaxIndex;
     uint256 readHighwater;
-    uint256[] constants;
+    bytes32[] constants;
     uint256 opIndex;
     bytes bytecode;
 }
 
 library LibIntegrityCheckNP {
-    using LibIntegrityCheckNP for IntegrityCheckStateNP;
+    using LibIntegrityCheckNP for IntegrityCheckState;
 
-    function newState(bytes memory bytecode, uint256 stackIndex, uint256[] memory constants)
+    function newState(bytes memory bytecode, uint256 stackIndex, bytes32[] memory constants)
         internal
         pure
-        returns (IntegrityCheckStateNP memory)
+        returns (IntegrityCheckState memory)
     {
-        return IntegrityCheckStateNP(
+        return IntegrityCheckState(
             // stackIndex
             stackIndex,
             // stackMaxIndex
@@ -50,7 +50,7 @@ library LibIntegrityCheckNP {
         );
     }
 
-    function integrityCheck2(bytes memory fPointers, bytes memory bytecode, uint256[] memory constants)
+    function integrityCheck2(bytes memory fPointers, bytes memory bytecode, bytes32[] memory constants)
         internal
         view
         returns (bytes memory io)
@@ -91,7 +91,7 @@ library LibIntegrityCheckNP {
                     ioCursor := add(ioCursor, 2)
                 }
 
-                IntegrityCheckStateNP memory state = LibIntegrityCheckNP.newState(bytecode, inputsLength, constants);
+                IntegrityCheckState memory state = LibIntegrityCheckNP.newState(bytecode, inputsLength, constants);
 
                 // Have low 4 bytes of cursor overlap the first op, skipping the
                 // prefix.
@@ -99,10 +99,10 @@ library LibIntegrityCheckNP {
                 uint256 end = cursor + LibBytecode.sourceOpsCount(bytecode, i) * 4;
 
                 while (cursor < end) {
-                    Operand operand;
+                    OperandV2 operand;
                     uint256 bytecodeOpInputs;
                     uint256 bytecodeOpOutputs;
-                    function(IntegrityCheckStateNP memory, Operand)
+                    function(IntegrityCheckState memory, OperandV2)
                     view
                     returns (uint256, uint256) f;
                     assembly ("memory-safe") {

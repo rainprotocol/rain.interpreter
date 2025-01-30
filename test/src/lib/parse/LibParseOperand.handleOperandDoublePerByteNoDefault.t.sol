@@ -2,7 +2,7 @@
 pragma solidity =0.8.25;
 
 import {Test} from "forge-std/Test.sol";
-import {LibParseOperand, Operand} from "src/lib/parse/LibParseOperand.sol";
+import {LibParseOperand, OperandV2} from "src/lib/parse/LibParseOperand.sol";
 import {ExpectedOperand, UnexpectedOperandValue} from "src/error/ErrParse.sol";
 import {LibParseLiteral} from "src/lib/parse/literal/LibParseLiteral.sol";
 import {OperandOverflow} from "src/error/ErrParse.sol";
@@ -64,6 +64,6 @@ contract LibParseOperandHandleOperandDoublePerByteNoDefaultTest is Test {
         uint256[] memory values = new uint256[](2);
         values[0] = a;
         values[1] = b;
-        assertEq(Operand.unwrap(LibParseOperand.handleOperandDoublePerByteNoDefault(values)), (b << 8) | a);
+        assertEq(OperandV2.unwrap(LibParseOperand.handleOperandDoublePerByteNoDefault(values)), (b << 8) | a);
     }
 }

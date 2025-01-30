@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: CAL
 pragma solidity ^0.8.18;
 
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
-import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
+import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
+import {InterpreterState} from "../../state/LibInterpreterState.sol";
 import {LibIntOrAString, IntOrAString} from "rain.intorastring/lib/LibIntOrAString.sol";
 
 /// @title LibOpConditionsNP
@@ -13,9 +13,9 @@ import {LibIntOrAString, IntOrAString} from "rain.intorastring/lib/LibIntOrAStri
 library LibOpConditionsNP {
     using LibIntOrAString for IntOrAString;
 
-    function integrity(IntegrityCheckStateNP memory, Operand operand) internal pure returns (uint256, uint256) {
+    function integrity(IntegrityCheckState memory, OperandV2 operand) internal pure returns (uint256, uint256) {
         // There must be at least two inputs.
-        uint256 inputs = (Operand.unwrap(operand) >> 0x10) & 0x0F;
+        uint256 inputs = uint256((OperandV2.unwrap(operand) >> 0x10) & bytes32(uint256(0x0F)));
         inputs = inputs > 2 ? inputs : 2;
         return (inputs, 1);
     }
@@ -27,7 +27,7 @@ library LibOpConditionsNP {
     /// revert. The number of inputs must be even. The number of outputs is 1.
     /// If an author wants to provide some default value, they can set the last
     /// condition to some nonzero constant value such as 1.
-    function run(InterpreterStateNP memory, Operand operand, Pointer stackTop) internal pure returns (Pointer) {
+    function run(InterpreterState memory, OperandV2 operand, Pointer stackTop) internal pure returns (Pointer) {
         uint256 condition;
         IntOrAString reason = IntOrAString.wrap(0);
         assembly ("memory-safe") {
@@ -52,7 +52,7 @@ library LibOpConditionsNP {
     }
 
     /// Gas intensive reference implementation of `condition` for testing.
-    function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory inputs)
+    function referenceFn(InterpreterState memory, OperandV2, uint256[] memory inputs)
         internal
         pure
         returns (uint256[] memory outputs)

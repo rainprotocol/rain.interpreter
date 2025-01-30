@@ -2,14 +2,14 @@
 pragma solidity =0.8.25;
 
 import {OpTest} from "test/abstract/OpTest.sol";
-import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 import {LibOpERC721OwnerOf} from "src/lib/op/erc721/LibOpERC721OwnerOf.sol";
 import {IERC721} from "openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
 import {
     IInterpreterV4,
     FullyQualifiedNamespace,
     SourceIndexV2,
-    Operand,
+    OperandV2,
     EvalV4
 } from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {IInterpreterStoreV2} from "rain.interpreter.interface/interface/IInterpreterStoreV2.sol";
@@ -23,9 +23,9 @@ import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";
 /// @title LibOpERC721OwnerOfTest
 /// @notice Test the opcode for getting the owner of an erc721 token.
 contract LibOpERC721OwnerOfTest is OpTest {
-    function testOpERC721OwnerOfNPIntegrity(IntegrityCheckStateNP memory state, uint8 inputs) external pure {
+    function testOpERC721OwnerOfNPIntegrity(IntegrityCheckState memory state, uint8 inputs) external pure {
         (uint256 calcInputs, uint256 calcOutputs) =
-            LibOpERC721OwnerOf.integrity(state, Operand.wrap(uint256(inputs) << 0x10));
+            LibOpERC721OwnerOf.integrity(state, OperandV2.wrap(uint256(inputs) << 0x10));
 
         assertEq(calcInputs, 2);
         assertEq(calcOutputs, 1);
@@ -41,7 +41,7 @@ contract LibOpERC721OwnerOfTest is OpTest {
         uint256[] memory inputs = new uint256[](2);
         inputs[0] = uint256(uint160(token));
         inputs[1] = tokenId;
-        Operand operand = LibOperand.build(2, 1, operandData);
+        OperandV2 operand = LibOperand.build(2, 1, operandData);
 
         opReferenceCheck(
             opTestDefaultInterpreterState(),

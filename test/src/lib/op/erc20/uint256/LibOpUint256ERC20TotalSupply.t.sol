@@ -1,9 +1,9 @@
-// // // SPDX-License-Identifier: CAL
-// // pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // // import {OpTest} from "test/abstract/OpTest.sol";
-// // import {IntegrityCheckStateNP} from "src/lib/integrity/LibIntegrityCheckNP.sol";
-// // import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+// // import {IntegrityCheckState} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// // import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 // // import {LibOpUint256ERC20TotalSupply} from "src/lib/op/erc20/uint256/LibOpUint256ERC20TotalSupply.sol";
 // // import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 // // import {UnexpectedOperand} from "src/error/ErrParse.sol";
@@ -12,7 +12,7 @@
 // /// @title LibOpUint256ERC20TotalSupplyTest
 // /// @notice Test the opcode for getting the total supply of an erc20 contract.
 // contract LibOpUint256ERC20TotalSupplyTest is OpTest {
-//     function testOpERC20TotalSupplyNPIntegrity(IntegrityCheckStateNP memory state, Operand operand) external pure {
+//     function testOpERC20TotalSupplyNPIntegrity(IntegrityCheckState memory state, Operand operand) external pure {
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpUint256ERC20TotalSupply.integrity(state, operand);
 
 // //         assertEq(calcInputs, 1);

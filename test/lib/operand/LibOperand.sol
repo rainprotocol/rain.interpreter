@@ -1,12 +1,12 @@
 // SPDX-License-Identifier: CAL
 pragma solidity ^0.8.18;
 
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 
 library LibOperand {
-    function build(uint8 inputs, uint8 outputs, uint16 operandData) internal pure returns (Operand) {
+    function build(uint8 inputs, uint8 outputs, uint16 operandData) internal pure returns (OperandV2) {
         require(inputs < 0x10, "inputs must be less than 16");
         require(outputs < 0x10, "outputs must be less than 16");
-        return Operand.wrap(uint256(outputs) << 0x14 | uint256(inputs) << 0x10 | uint256(operandData));
+        return OperandV2.wrap(bytes32(uint256(outputs) << 0x14 | uint256(inputs) << 0x10 | uint256(operandData)));
     }
 }

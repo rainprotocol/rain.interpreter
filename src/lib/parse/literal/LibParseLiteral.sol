@@ -49,10 +49,10 @@ library LibParseLiteral {
     function selectLiteralParserByIndex(ParseState memory state, uint256 index)
         internal
         pure
-        returns (function(ParseState memory, uint256, uint256) pure returns (uint256, uint256))
+        returns (function(ParseState memory, uint256, uint256) pure returns (uint256, bytes32))
     {
         bytes memory literalParsers = state.literalParsers;
-        function(ParseState memory, uint256, uint256) pure returns (uint256, uint256) parser;
+        function(ParseState memory, uint256, uint256) pure returns (uint256, bytes32) parser;
         // This is NOT bounds checked because the indexes are all expected to
         // be provided by the parser itself and not user input.
         assembly ("memory-safe") {
@@ -64,9 +64,9 @@ library LibParseLiteral {
     function parseLiteral(ParseState memory state, uint256 cursor, uint256 end)
         internal
         pure
-        returns (uint256, uint256)
+        returns (uint256, bytes32)
     {
-        (bool success, uint256 newCursor, uint256 value) = tryParseLiteral(state, cursor, end);
+        (bool success, uint256 newCursor, bytes32 value) = tryParseLiteral(state, cursor, end);
         if (success) {
             return (newCursor, value);
         } else {
@@ -77,7 +77,7 @@ library LibParseLiteral {
     function tryParseLiteral(ParseState memory state, uint256 cursor, uint256 end)
         internal
         pure
-        returns (bool, uint256, uint256)
+        returns (bool, uint256, bytes32)
     {
         uint256 index;
         {
@@ -118,7 +118,7 @@ library LibParseLiteral {
                 return (false, cursor, 0);
             }
         }
-        uint256 value;
+        bytes32 value;
         (cursor, value) = state.selectLiteralParserByIndex(index)(state, cursor, end);
         return (true, cursor, value);
     }

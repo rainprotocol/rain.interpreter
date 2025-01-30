@@ -1,17 +1,17 @@
-// // // SPDX-License-Identifier: CAL
-// // pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // // import {OpTest} from "test/abstract/OpTest.sol";
 // // import {LibContext} from "rain.interpreter.interface/lib/caller/LibContext.sol";
 // // import {LibOpIfNP} from "src/lib/op/logic/LibOpIfNP.sol";
-// // import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// // import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 // // import {
 // //     IInterpreterV4,
 // //     Operand,
 // //     SourceIndexV2,
 // //     FullyQualifiedNamespace
 // // } from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-// // import {InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
+// // import {InterpreterState} from "src/lib/state/LibInterpreterState.sol";
 // // import {IInterpreterStoreV2} from "rain.interpreter.interface/interface/IInterpreterStoreV2.sol";
 // // import {SignedContextV1} from "rain.interpreter.interface/interface/IInterpreterCallerV3.sol";
 // // import {LibOperand} from "test/lib/operand/LibOperand.sol";
@@ -21,7 +21,7 @@
 //     /// operand inputs, the calc inputs must be 2, and the calc outputs must be
 //     /// 1.
 //     function testOpIfNPIntegrityHappy(
-//         IntegrityCheckStateNP memory state,
+//         IntegrityCheckState memory state,
 //         uint8 inputs,
 //         uint8 outputs,
 //         uint16 operandData
@@ -38,7 +38,7 @@
 
 //     /// Directly test the runtime logic of LibOpIfNP.
 //     function testOpIfNPRun(uint256 a, uint256 b, uint256 c) external view {
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 //         uint256[] memory inputs = new uint256[](3);
 //         inputs[0] = a;
 //         inputs[1] = b;

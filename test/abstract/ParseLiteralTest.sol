@@ -19,7 +19,7 @@ contract ParseLiteralTest is Test {
         uint256 cursor = outerStart;
         uint256 end = outerStart + data.length;
         vm.expectRevert(abi.encodeWithSelector(UnsupportedLiteralType.selector, offset));
-        uint256 value;
+        bytes32 value;
         (cursor, value) = state.parseLiteral(cursor, end);
         (cursor, value);
     }

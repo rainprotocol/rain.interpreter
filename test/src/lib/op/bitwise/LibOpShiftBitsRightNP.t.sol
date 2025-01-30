@@ -2,13 +2,13 @@
 pragma solidity =0.8.25;
 
 import {OpTest} from "test/abstract/OpTest.sol";
-import {IntegrityCheckStateNP} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+import {IntegrityCheckState} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 import {LibOpShiftBitsRightNP} from "src/lib/op/bitwise/LibOpShiftBitsRightNP.sol";
-import {InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
+import {InterpreterState} from "src/lib/state/LibInterpreterState.sol";
 import {
     IInterpreterV4,
     FullyQualifiedNamespace,
-    Operand,
+    OperandV2,
     SourceIndexV2
 } from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {IInterpreterStoreV2} from "rain.interpreter.interface/interface/IInterpreterStoreV2.sol";
@@ -24,7 +24,7 @@ contract LibOpShiftBitsRightNPTest is OpTest {
     /// shift amount.
     /// forge-config: default.fuzz.runs = 100
     function testOpShiftBitsRightNPIntegrityHappy(
-        IntegrityCheckStateNP memory state,
+        IntegrityCheckState memory state,
         uint8 inputs,
         uint8 outputs,
         uint8 shiftAmount
@@ -32,7 +32,7 @@ contract LibOpShiftBitsRightNPTest is OpTest {
         vm.assume(shiftAmount != 0);
         inputs = uint8(bound(inputs, 1, 0x0F));
         outputs = uint8(bound(outputs, 1, 0x0F));
-        Operand operand = LibOperand.build(inputs, outputs, shiftAmount);
+        OperandV2 operand = LibOperand.build(inputs, outputs, shiftAmount);
         (uint256 calcInputs, uint256 calcOutputs) = LibOpShiftBitsRightNP.integrity(state, operand);
         assertEq(calcInputs, 1);
         assertEq(calcOutputs, 1);
@@ -42,11 +42,11 @@ contract LibOpShiftBitsRightNPTest is OpTest {
     /// any shift amount that always results in an output of 0 will error as
     /// an unsupported shift amount.
     /// forge-config: default.fuzz.runs = 100
-    function testOpShiftBitsRightNPIntegrityZero(IntegrityCheckStateNP memory state, uint8 inputs, uint16 shiftAmount16)
+    function testOpShiftBitsRightNPIntegrityZero(IntegrityCheckState memory state, uint8 inputs, uint16 shiftAmount16)
         external
     {
         uint256 shiftAmount = bound(uint256(shiftAmount16), uint256(type(uint8).max) + 1, type(uint16).max);
-        Operand operand = Operand.wrap(uint256(inputs) << 0x10 | shiftAmount);
+        OperandV2 operand = OperandV2.wrap(uint256(inputs) << 0x10 | shiftAmount);
         vm.expectRevert(abi.encodeWithSelector(UnsupportedBitwiseShiftAmount.selector, shiftAmount));
         (uint256 calcInputs, uint256 calcOutputs) = LibOpShiftBitsRightNP.integrity(state, operand);
         (calcInputs, calcOutputs);
@@ -56,8 +56,8 @@ contract LibOpShiftBitsRightNPTest is OpTest {
     /// any shift amount that is a noop (0) will error as an unsupported shift
     /// amount.
     /// forge-config: default.fuzz.runs = 100
-    function testOpShiftBitsRightNPIntegrityNoop(IntegrityCheckStateNP memory state, uint8 inputs) external {
-        Operand operand = Operand.wrap(uint256(inputs) << 0x10);
+    function testOpShiftBitsRightNPIntegrityNoop(IntegrityCheckState memory state, uint8 inputs) external {
+        OperandV2 operand = OperandV2.wrap(uint256(inputs) << 0x10);
         vm.expectRevert(abi.encodeWithSelector(UnsupportedBitwiseShiftAmount.selector, 0));
         (uint256 calcInputs, uint256 calcOutputs) = LibOpShiftBitsRightNP.integrity(state, operand);
         (calcInputs, calcOutputs);
@@ -67,10 +67,10 @@ contract LibOpShiftBitsRightNPTest is OpTest {
     /// the opcode correctly shifts bits right.
     function testOpShiftBitsRightNPRun(uint256 x, uint8 shiftAmount) external view {
         vm.assume(shiftAmount != 0);
-        InterpreterStateNP memory state = opTestDefaultInterpreterState();
+        InterpreterState memory state = opTestDefaultInterpreterState();
         uint256[] memory inputs = new uint256[](1);
         inputs[0] = x;
-        Operand operand = LibOperand.build(uint8(inputs.length), 1, shiftAmount);
+        OperandV2 operand = LibOperand.build(uint8(inputs.length), 1, shiftAmount);
         opReferenceCheck(
             state,
             operand,

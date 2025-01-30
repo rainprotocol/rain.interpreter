@@ -1,8 +1,8 @@
-// // // SPDX-License-Identifier: CAL
-// // pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // // import {OpTest} from "test/abstract/OpTest.sol";
-// // import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// // import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 // // import {LibOpUint256ERC721BalanceOf} from "src/lib/op/erc721/uint256/LibOpUint256ERC721BalanceOf.sol";
 // // import {IERC721} from "openzeppelin-contracts/contracts/token/ERC721/IERC721.sol";
 // // import {
@@ -24,7 +24,7 @@
 // /// @notice Test the opcode for getting the balance of an erc721 token.
 // contract LibOpUint256ERC721BalanceOfTest is OpTest {
 //     function testOpERC721BalanceOfIntegrity(
-//         IntegrityCheckStateNP memory state,
+//         IntegrityCheckState memory state,
 //         uint8 inputs,
 //         uint8 outputs,
 //         uint16 operandData

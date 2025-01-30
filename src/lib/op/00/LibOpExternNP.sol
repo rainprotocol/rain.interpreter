@@ -2,18 +2,20 @@
 pragma solidity ^0.8.18;
 
 import {NotAnExternContract} from "../../../error/ErrExtern.sol";
-import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
+import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {InterpreterState} from "../../state/LibInterpreterState.sol";
 import {Pointer} from "rain.solmem/lib/LibPointer.sol";
 import {
-    IInterpreterExternV3,
-    ExternDispatch,
-    EncodedExternDispatch
-} from "rain.interpreter.interface/interface/IInterpreterExternV3.sol";
+    IInterpreterExternV4,
+    ExternDispatchV2,
+    EncodedExternDispatchV2,
+    StackItem
+} from "rain.interpreter.interface/interface/unstable/IInterpreterExternV4.sol";
 import {LibExtern} from "../../extern/LibExtern.sol";
 import {LibMemCpy} from "rain.solmem/lib/LibMemCpy.sol";
 import {LibUint256Array} from "rain.solmem/lib/LibUint256Array.sol";
+import {LibBytes32Array} from "rain.solmem/lib/LibBytes32Array.sol";
 import {ERC165Checker} from "openzeppelin-contracts/contracts/utils/introspection/ERC165Checker.sol";
 
 /// Thrown when a constant read index is outside the constants array.
@@ -27,30 +29,30 @@ error BadOutputsLength(uint256 expectedLength, uint256 actualLength);
 library LibOpExternNP {
     using LibUint256Array for uint256[];
 
-    function integrity(IntegrityCheckStateNP memory state, Operand operand) internal view returns (uint256, uint256) {
-        uint256 encodedExternDispatchIndex = Operand.unwrap(operand) & 0xFFFF;
+    function integrity(IntegrityCheckState memory state, OperandV2 operand) internal view returns (uint256, uint256) {
+        uint256 encodedExternDispatchIndex = uint256(OperandV2.unwrap(operand) & bytes32(uint256(0xFFFF)));
 
-        EncodedExternDispatch encodedExternDispatch =
-            EncodedExternDispatch.wrap(state.constants[encodedExternDispatchIndex]);
-        (IInterpreterExternV3 extern, ExternDispatch dispatch) = LibExtern.decodeExternCall(encodedExternDispatch);
-        if (!ERC165Checker.supportsInterface(address(extern), type(IInterpreterExternV3).interfaceId)) {
+        EncodedExternDispatchV2 encodedExternDispatch =
+            EncodedExternDispatchV2.wrap(state.constants[encodedExternDispatchIndex]);
+        (IInterpreterExternV4 extern, ExternDispatchV2 dispatch) = LibExtern.decodeExternCall(encodedExternDispatch);
+        if (!ERC165Checker.supportsInterface(address(extern), type(IInterpreterExternV4).interfaceId)) {
             revert NotAnExternContract(address(extern));
         }
-        uint256 expectedInputsLength = (Operand.unwrap(operand) >> 0x10) & 0x0F;
-        uint256 expectedOutputsLength = (Operand.unwrap(operand) >> 0x14) & 0x0F;
+        uint256 expectedInputsLength = uint256((OperandV2.unwrap(operand) >> 0x10) & bytes32(uint256(0x0F)));
+        uint256 expectedOutputsLength = uint256((OperandV2.unwrap(operand) >> 0x14) & bytes32(uint256(0x0F)));
         //slither-disable-next-line unused-return
         return extern.externIntegrity(dispatch, expectedInputsLength, expectedOutputsLength);
     }
 
-    function run(InterpreterStateNP memory state, Operand operand, Pointer stackTop) internal view returns (Pointer) {
-        uint256 encodedExternDispatchIndex = Operand.unwrap(operand) & 0xFFFF;
-        uint256 inputsLength = (Operand.unwrap(operand) >> 0x10) & 0x0F;
-        uint256 outputsLength = (Operand.unwrap(operand) >> 0x14) & 0x0F;
+    function run(InterpreterState memory state, OperandV2 operand, Pointer stackTop) internal view returns (Pointer) {
+        uint256 encodedExternDispatchIndex = uint256(OperandV2.unwrap(operand) & bytes32(uint256(0xFFFF)));
+        uint256 inputsLength = uint256((OperandV2.unwrap(operand) >> 0x10) & bytes32(uint256(0x0F)));
+        uint256 outputsLength = uint256((OperandV2.unwrap(operand) >> 0x14) & bytes32(uint256(0x0F)));
 
-        uint256 encodedExternDispatch = state.constants[encodedExternDispatchIndex];
-        (IInterpreterExternV3 extern, ExternDispatch dispatch) =
-            LibExtern.decodeExternCall(EncodedExternDispatch.wrap(encodedExternDispatch));
-        uint256[] memory inputs;
+        bytes32 encodedExternDispatch = state.constants[encodedExternDispatchIndex];
+        (IInterpreterExternV4 extern, ExternDispatchV2 dispatch) =
+            LibExtern.decodeExternCall(EncodedExternDispatchV2.wrap(encodedExternDispatch));
+        StackItem[] memory inputs;
         uint256 head;
         assembly ("memory-safe") {
             // Mutate the word before the current stack top to be the length of
@@ -64,7 +66,7 @@ library LibOpExternNP {
             head := mload(inputs)
             mstore(inputs, inputsLength)
         }
-        uint256[] memory outputs = extern.extern(dispatch, inputs);
+        StackItem[] memory outputs = extern.extern(dispatch, inputs);
         if (outputsLength != outputs.length) {
             revert BadOutputsLength(outputsLength, outputs.length);
         }
@@ -90,22 +92,26 @@ library LibOpExternNP {
         return stackTop;
     }
 
-    function referenceFn(InterpreterStateNP memory state, Operand operand, uint256[] memory inputs)
+    function referenceFn(InterpreterState memory state, OperandV2 operand, StackItem[] memory inputs)
         internal
         view
-        returns (uint256[] memory outputs)
+        returns (StackItem[] memory outputs)
     {
-        uint256 encodedExternDispatchIndex = Operand.unwrap(operand) & 0xFFFF;
-        uint256 outputsLength = (Operand.unwrap(operand) >> 0x14) & 0x0F;
+        uint256 encodedExternDispatchIndex = uint256(OperandV2.unwrap(operand) & bytes32(uint256(0xFFFF)));
+        uint256 outputsLength = uint256((OperandV2.unwrap(operand) >> 0x14) & bytes32(uint256(0x0F)));
 
-        uint256 encodedExternDispatch = state.constants[encodedExternDispatchIndex];
-        (IInterpreterExternV3 extern, ExternDispatch dispatch) =
-            LibExtern.decodeExternCall(EncodedExternDispatch.wrap(encodedExternDispatch));
+        bytes32 encodedExternDispatch = state.constants[encodedExternDispatchIndex];
+        (IInterpreterExternV4 extern, ExternDispatchV2 dispatch) =
+            LibExtern.decodeExternCall(EncodedExternDispatchV2.wrap(encodedExternDispatch));
         outputs = extern.extern(dispatch, inputs);
         if (outputs.length != outputsLength) {
             revert BadOutputsLength(outputsLength, outputs.length);
         }
         // The stack is built backwards, so we need to reverse the outputs.
-        LibUint256Array.reverse(outputs);
+        bytes32[] memory outputsBytes32;
+        assembly {
+            outputsBytes32 := outputs
+        }
+        LibBytes32Array.reverse(outputsBytes32);
     }
 }

@@ -9,14 +9,14 @@ import {
     UnexpectedOperandValue,
     OperandOverflow
 } from "../../error/ErrParse.sol";
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {LibParse} from "./LibParse.sol";
 import {LibParseLiteral} from "./literal/LibParseLiteral.sol";
 import {CMASK_OPERAND_END, CMASK_WHITESPACE, CMASK_OPERAND_START} from "rain.string/lib/parse/LibParseCMask.sol";
 import {ParseState, OPERAND_VALUES_LENGTH, FSM_YANG_MASK} from "./LibParseState.sol";
 import {LibParseError} from "./LibParseError.sol";
 import {LibParseInterstitial} from "./LibParseInterstitial.sol";
-import {LibDecimalFloat} from "rain.math.float/lib/LibDecimalFloat.sol";
+import {LibDecimalFloat, PackedFloat} from "rain.math.float/lib/LibDecimalFloat.sol";
 
 library LibParseOperand {
     using LibParseError for ParseState;
@@ -33,7 +33,7 @@ library LibParseOperand {
 
         // Reset operand values to length 0 to avoid any previous values bleeding
         // into processing this operand.
-        uint256[] memory operandValues = state.operandValues;
+        bytes32[] memory operandValues = state.operandValues;
         assembly ("memory-safe") {
             mstore(operandValues, 0)
         }
@@ -79,7 +79,7 @@ library LibParseOperand {
                     if (i == OPERAND_VALUES_LENGTH) {
                         revert OperandValuesOverflow(state.parseErrorOffset(cursor));
                     }
-                    uint256 value;
+                    bytes32 value;
                     (cursor, value) = state.parseLiteral(cursor, end);
                     // We manipulate the operand values array directly in
                     // assembly because if we used the Solidity indexing syntax
@@ -122,8 +122,8 @@ library LibParseOperand {
     /// parser the literal extraction will be done first, then the word lookup
     /// will have to be done by the sub parser, alongside the values provided
     /// by the main parser.
-    function handleOperand(ParseState memory state, uint256 wordIndex) internal pure returns (Operand) {
-        function (uint256[] memory) internal pure returns (Operand) handler;
+    function handleOperand(ParseState memory state, uint256 wordIndex) internal pure returns (OperandV2) {
+        function (bytes32[] memory) internal pure returns (OperandV2) handler;
         bytes memory handlers = state.operandHandlers;
         assembly ("memory-safe") {
             // There is no bounds check here because the indexes are calcualted
@@ -135,53 +135,57 @@ library LibParseOperand {
         return handler(state.operandValues);
     }
 
-    function handleOperandDisallowed(uint256[] memory values) internal pure returns (Operand) {
+    function handleOperandDisallowed(bytes32[] memory values) internal pure returns (OperandV2) {
         if (values.length != 0) {
             revert UnexpectedOperand();
         }
-        return Operand.wrap(0);
+        return OperandV2.wrap(0);
     }
 
-    function handleOperandDisallowedAlwaysOne(uint256[] memory values) internal pure returns (Operand) {
+    function handleOperandDisallowedAlwaysOne(bytes32[] memory values) internal pure returns (OperandV2) {
         if (values.length != 0) {
             revert UnexpectedOperand();
         }
-        return Operand.wrap(1);
+        return OperandV2.wrap(bytes32(uint256(1)));
     }
 
     /// There must be one or zero values. The fallback is 0 if nothing is
     /// provided, else the provided value MUST fit in two bytes and is used as
     /// is.
-    function handleOperandSingleFull(uint256[] memory values) internal pure returns (Operand operand) {
+    function handleOperandSingleFull(bytes32[] memory values) internal pure returns (OperandV2 operand) {
         // Happy path at the top for efficiency.
         if (values.length == 1) {
             assembly ("memory-safe") {
                 operand := mload(add(values, 0x20))
             }
-            (int256 signedCoefficient, int256 exponent) = LibDecimalFloat.unpack(Operand.unwrap(operand));
-            operand = Operand.wrap(LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0));
-            if (Operand.unwrap(operand) > type(uint16).max) {
+            (int256 signedCoefficient, int256 exponent) =
+                LibDecimalFloat.unpack(PackedFloat.wrap(OperandV2.unwrap(operand)));
+            uint256 operandUint = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
+            if (operandUint > type(uint16).max) {
                 revert OperandOverflow();
             }
+            operand = OperandV2.wrap(bytes32(operandUint));
         } else if (values.length == 0) {
-            operand = Operand.wrap(0);
+            operand = OperandV2.wrap(0);
         } else {
             revert UnexpectedOperandValue();
         }
     }
 
     /// There must be exactly one value. There is no default fallback.
-    function handleOperandSingleFullNoDefault(uint256[] memory values) internal pure returns (Operand operand) {
+    function handleOperandSingleFullNoDefault(bytes32[] memory values) internal pure returns (OperandV2 operand) {
         // Happy path at the top for efficiency.
         if (values.length == 1) {
             assembly ("memory-safe") {
                 operand := mload(add(values, 0x20))
             }
-            (int256 signedCoefficient, int256 exponent) = LibDecimalFloat.unpack(Operand.unwrap(operand));
-            operand = Operand.wrap(LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0));
-            if (Operand.unwrap(operand) > type(uint16).max) {
+            (int256 signedCoefficient, int256 exponent) =
+                LibDecimalFloat.unpack(PackedFloat.wrap(OperandV2.unwrap(operand)));
+            uint256 operandUint = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
+            if (operandUint > uint256(type(uint16).max)) {
                 revert OperandOverflow();
             }
+            operand = OperandV2.wrap(bytes32(operandUint));
         } else if (values.length == 0) {
             revert ExpectedOperand();
         } else {
@@ -191,25 +195,25 @@ library LibParseOperand {
 
     /// There must be exactly two values. There is no default fallback. Each
     /// value MUST fit in one byte and is used as is.
-    function handleOperandDoublePerByteNoDefault(uint256[] memory values) internal pure returns (Operand operand) {
+    function handleOperandDoublePerByteNoDefault(bytes32[] memory values) internal pure returns (OperandV2 operand) {
         // Happy path at the top for efficiency.
         if (values.length == 2) {
-            uint256 a;
-            uint256 b;
+            PackedFloat a;
+            PackedFloat b;
             assembly ("memory-safe") {
                 a := mload(add(values, 0x20))
                 b := mload(add(values, 0x40))
             }
             (int256 signedCoefficient, int256 exponent) = LibDecimalFloat.unpack(a);
-            a = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
+            uint256 aUint = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
             (signedCoefficient, exponent) = LibDecimalFloat.unpack(b);
-            b = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
+            uint256 bUint = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
 
-            if (a > type(uint8).max || b > type(uint8).max) {
+            if (aUint > type(uint8).max || bUint > type(uint8).max) {
                 revert OperandOverflow();
             }
 
-            operand = Operand.wrap(a | (b << 8));
+            operand = OperandV2.wrap(bytes32(aUint | (bUint << 8)));
         } else if (values.length < 2) {
             revert ExpectedOperand();
         } else {
@@ -219,13 +223,13 @@ library LibParseOperand {
 
     /// 8 bit value then maybe 1 bit flag then maybe 1 bit flag. Fallback to 0
     /// for both flags if not provided.
-    function handleOperand8M1M1(uint256[] memory values) internal pure returns (Operand operand) {
+    function handleOperand8M1M1(bytes32[] memory values) internal pure returns (OperandV2 operand) {
         // Happy path at the top for efficiency.
         uint256 length = values.length;
         if (length >= 1 && length <= 3) {
-            uint256 a;
-            uint256 b;
-            uint256 c;
+            PackedFloat a;
+            PackedFloat b;
+            PackedFloat c;
             assembly ("memory-safe") {
                 a := mload(add(values, 0x20))
             }
@@ -235,7 +239,7 @@ library LibParseOperand {
                     b := mload(add(values, 0x40))
                 }
             } else {
-                b = 0;
+                b = PackedFloat.wrap(0);
             }
 
             if (length == 3) {
@@ -243,21 +247,21 @@ library LibParseOperand {
                     c := mload(add(values, 0x60))
                 }
             } else {
-                c = 0;
+                c = PackedFloat.wrap(0);
             }
 
             (int256 signedCoefficient, int256 exponent) = LibDecimalFloat.unpack(a);
-            a = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
+            uint256 aUint = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
             (signedCoefficient, exponent) = LibDecimalFloat.unpack(b);
-            b = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
+            uint256 bUint = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
             (signedCoefficient, exponent) = LibDecimalFloat.unpack(c);
-            c = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
+            uint256 cUint = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
 
-            if (a > type(uint8).max || b > 1 || c > 1) {
+            if (aUint > type(uint8).max || bUint > 1 || cUint > 1) {
                 revert OperandOverflow();
             }
 
-            operand = Operand.wrap(a | (b << 8) | (c << 9));
+            operand = OperandV2.wrap(bytes32(aUint | (bUint << 8) | (cUint << 9)));
         } else if (length == 0) {
             revert ExpectedOperand();
         } else {
@@ -266,19 +270,19 @@ library LibParseOperand {
     }
 
     /// 2x maybe 1 bit flags. Fallback to 0 for both flags if not provided.
-    function handleOperandM1M1(uint256[] memory values) internal pure returns (Operand operand) {
+    function handleOperandM1M1(bytes32[] memory values) internal pure returns (OperandV2 operand) {
         // Happy path at the top for efficiency.
         uint256 length = values.length;
         if (length < 3) {
-            uint256 a;
-            uint256 b;
+            PackedFloat a;
+            PackedFloat b;
 
             if (length >= 1) {
                 assembly ("memory-safe") {
                     a := mload(add(values, 0x20))
                 }
             } else {
-                a = 0;
+                a = PackedFloat.wrap(0);
             }
 
             if (length == 2) {
@@ -286,19 +290,19 @@ library LibParseOperand {
                     b := mload(add(values, 0x40))
                 }
             } else {
-                b = 0;
+                b = PackedFloat.wrap(0);
             }
 
             (int256 signedCoefficient, int256 exponent) = LibDecimalFloat.unpack(a);
-            a = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
+            uint256 aUint = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
             (signedCoefficient, exponent) = LibDecimalFloat.unpack(b);
-            b = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
+            uint256 bUint = LibDecimalFloat.toFixedDecimalLossless(signedCoefficient, exponent, 0);
 
-            if (a > 1 || b > 1) {
+            if (aUint > 1 || bUint > 1) {
                 revert OperandOverflow();
             }
 
-            operand = Operand.wrap(a | (b << 1));
+            operand = OperandV2.wrap(bytes32(aUint | (bUint << 1)));
         } else {
             revert UnexpectedOperandValue();
         }

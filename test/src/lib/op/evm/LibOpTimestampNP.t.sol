@@ -1,18 +1,18 @@
-// // // SPDX-License-Identifier: CAL
-// // pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // // import {OpTest} from "test/abstract/OpTest.sol";
 // // import {Pointer, LibPointer} from "rain.solmem/lib/LibPointer.sol";
 // // import {LibStackPointer} from "rain.solmem/lib/LibStackPointer.sol";
-// // import {LibInterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
+// // import {LibInterpreterState} from "src/lib/state/LibInterpreterState.sol";
 // // import {
 // //     IInterpreterV4,
 // //     Operand,
 // //     SourceIndexV2,
 // //     EvalV4
 // // } from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-// // import {InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
-// // import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// // import {InterpreterState} from "src/lib/state/LibInterpreterState.sol";
+// // import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 // // import {
 // //     IInterpreterStoreV2, FullyQualifiedNamespace
 // // } from "rain.interpreter.interface/interface/IInterpreterStoreV2.sol";
@@ -27,7 +27,7 @@
 // // contract LibOpTimestampNPTest is OpTest {
 // //     using LibPointer for Pointer;
 // //     using LibStackPointer for Pointer;
-// //     using LibInterpreterStateNP for InterpreterStateNP;
+// //     using LibInterpreterState for InterpreterState;
 
 // //     function timestampWords() internal pure returns (string[] memory) {
 // //         string[] memory words = new string[](2);
@@ -38,7 +38,7 @@
 
 //     /// Directly test the integrity logic of LibOpTimestampNP.
 //     function testOpTimestampNPIntegrity(
-//         IntegrityCheckStateNP memory state,
+//         IntegrityCheckState memory state,
 //         uint8 inputs,
 //         uint8 outputs,
 //         uint16 operandData
@@ -56,7 +56,7 @@
 // //     /// opcode correctly pushes the timestamp onto the stack.
 // //     function testOpTimestampNPRun(uint256 blockTimestamp) external {
 // //         blockTimestamp = bound(blockTimestamp, 0, type(uint256).max / 1e18);
-// //         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+// //         InterpreterState memory state = opTestDefaultInterpreterState();
 // //         vm.warp(blockTimestamp);
 // //         uint256[] memory inputs = new uint256[](0);
 // //         Operand operand = LibOperand.build(0, 1, 0);

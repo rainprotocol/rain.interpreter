@@ -1,23 +1,23 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity ^0.8.18;
+// SPDX-License-Identifier: CAL
+pragma solidity ^0.8.18;
 
 // import {UD60x18, exp} from "prb-math/UD60x18.sol";
-// import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+// import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 // import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-// import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
-// import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
+// import {InterpreterState} from "../../state/LibInterpreterState.sol";
+// import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
 
 // /// @title LibOpExp
 // /// @notice Opcode for the natural exponential e^x as decimal 18 fixed point.
 // library LibOpExp {
-//     function integrity(IntegrityCheckStateNP memory, Operand) internal pure returns (uint256, uint256) {
+//     function integrity(IntegrityCheckState memory, Operand) internal pure returns (uint256, uint256) {
 //         // There must be one inputs and one output.
 //         return (1, 1);
 //     }
 
 //     /// exp
 //     /// 18 decimal fixed point natural exponent of a number.
-//     function run(InterpreterStateNP memory, Operand, Pointer stackTop) internal pure returns (Pointer) {
+//     function run(InterpreterState memory, Operand, Pointer stackTop) internal pure returns (Pointer) {
 //         uint256 a;
 //         assembly ("memory-safe") {
 //             a := mload(stackTop)
@@ -31,7 +31,7 @@
 //     }
 
 //     /// Gas intensive reference implementation of exp for testing.
-//     function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory inputs)
+//     function referenceFn(InterpreterState memory, Operand, uint256[] memory inputs)
 //         internal
 //         pure
 //         returns (uint256[] memory)

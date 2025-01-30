@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: CAL
 pragma solidity ^0.8.18;
 
-import {Operand, OPCODE_CONSTANT} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {OperandV2, OPCODE_CONSTANT} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {LibParseStackTracker, ParseStackTracker} from "./LibParseStackTracker.sol";
 import {Pointer} from "rain.solmem/lib/LibPointer.sol";
 import {LibMemCpy} from "rain.solmem/lib/LibMemCpy.sol";
@@ -126,7 +126,7 @@ struct ParseState {
     uint256 parenTracker1;
     uint256 lineTracker;
     /// - `pushSubParser`
-    uint256 subParsers;
+    bytes32 subParsers;
     /// @dev END things that are referenced directly in assembly by hardcoded
     /// offsets.
     uint256 sourcesBuilder;
@@ -134,10 +134,10 @@ struct ParseState {
     uint256 stackNames;
     uint256 stackNameBloom;
     uint256 constantsBuilder;
-    uint256 constantsBloom;
+    bytes32 constantsBloom;
     bytes literalParsers;
     bytes operandHandlers;
-    uint256[] operandValues;
+    bytes32[] operandValues;
     ParseStackTracker stackTracker;
     bytes data;
     bytes meta;
@@ -222,7 +222,7 @@ library LibParseState {
             // operandHandlers
             operandHandlers,
             // operandValues
-            new uint256[](OPERAND_VALUES_LENGTH),
+            new bytes32[](OPERAND_VALUES_LENGTH),
             // stackTracker
             ParseStackTracker.wrap(0),
             // data bytes
@@ -238,12 +238,12 @@ library LibParseState {
     /// sub parsers in memory. The sub parser is expected to be an `address` so
     /// the pointer for the linked list is ORed in the 16 high bits of the
     /// `uint256`.
-    function pushSubParser(ParseState memory state, uint256 cursor, uint256 subParser) internal pure {
-        if (subParser > uint256(type(uint160).max)) {
+    function pushSubParser(ParseState memory state, uint256 cursor, bytes32 subParser) internal pure {
+        if (uint256(subParser) > uint256(type(uint160).max)) {
             revert InvalidSubParser(state.parseErrorOffset(cursor));
         }
 
-        uint256 tail = state.subParsers;
+        bytes32 tail = state.subParsers;
         // Move the tail off to a new allocation.
         uint256 tailPointer;
         assembly ("memory-safe") {
@@ -252,12 +252,12 @@ library LibParseState {
             mstore(tailPointer, tail)
         }
         // Put the tail pointer in the high bits of the new head.
-        state.subParsers = subParser | tailPointer << 0xF0;
+        state.subParsers = subParser | bytes32(tailPointer << 0xF0);
     }
 
     /// Builds a memory array of sub parsers from the linked list of sub parsers.
     function exportSubParsers(ParseState memory state) internal pure returns (address[] memory) {
-        uint256 tail = state.subParsers;
+        bytes32 tail = state.subParsers;
         uint256[] memory subParsersUint256;
         uint256 addressMask = type(uint160).max;
         assembly ("memory-safe") {
@@ -441,13 +441,13 @@ library LibParseState {
         }
     }
 
-    function constantValueBloom(uint256 value) internal pure returns (uint256 bloom) {
-        return uint256(1) << (value % 256);
+    function constantValueBloom(bytes32 value) internal pure returns (bytes32 bloom) {
+        return bytes32(uint256(1) << (uint256(value) % 256));
     }
 
     /// Includes a constant value in the constants linked list so that it will
     /// appear in the final constants array.
-    function pushConstantValue(ParseState memory state, uint256 value) internal pure {
+    function pushConstantValue(ParseState memory state, bytes32 value) internal pure {
         unchecked {
             uint256 headPtr;
             uint256 tailPtr = state.constantsBuilder >> 0x10;
@@ -472,7 +472,7 @@ library LibParseState {
 
     function pushLiteral(ParseState memory state, uint256 cursor, uint256 end) internal pure returns (uint256) {
         unchecked {
-            uint256 constantValue;
+            bytes32 constantValue;
             bool success;
             (success, cursor, constantValue) = state.tryParseLiteral(cursor, end);
             // Don't continue trying to push something that we can't parse.
@@ -502,7 +502,7 @@ library LibParseState {
                 uint256 tailPtr = state.constantsBuilder >> 0x10;
                 while (tailPtr != 0 && !exists) {
                     ++t;
-                    uint256 tailValue;
+                    bytes32 tailValue;
                     assembly ("memory-safe") {
                         tailValue := mload(add(tailPtr, 0x20))
                         tailPtr := mload(tailPtr)
@@ -518,7 +518,9 @@ library LibParseState {
             // 0 indexed from the bottom of the linked list to the top.
             {
                 uint256 constantsHeight = state.constantsBuilder & 0xFFFF;
-                state.pushOpToSource(OPCODE_CONSTANT, Operand.wrap(exists ? constantsHeight - t : constantsHeight));
+                state.pushOpToSource(
+                    OPCODE_CONSTANT, OperandV2.wrap(bytes32(exists ? constantsHeight - t : constantsHeight))
+                );
             }
 
             // If the literal is not a duplicate, then we need to add it to the
@@ -533,7 +535,7 @@ library LibParseState {
         }
     }
 
-    function pushOpToSource(ParseState memory state, uint256 opcode, Operand operand) internal pure {
+    function pushOpToSource(ParseState memory state, uint256 opcode, OperandV2 operand) internal pure {
         unchecked {
             // This might be a top level item so try to snapshot its pointer to
             // the line tracker before writing the stack counter.
@@ -554,7 +556,7 @@ library LibParseState {
                 mstore8(counterPointer, add(byte(0, mload(counterPointer)), 1))
             }
 
-            uint256 activeSource;
+            bytes32 activeSource;
             uint256 offset;
             uint256 activeSourcePointer = state.activeSourcePtr;
             assembly ("memory-safe") {
@@ -601,13 +603,13 @@ library LibParseState {
             // increment offset. We have 16 bits allocated to the offset and stop
             // processing at 0x100 so this never overflows into the actual source
             // data.
-            activeSource + 0x20
+            bytes32(uint256(activeSource) + 0x20)
             // include the operand. The operand is assumed to be 16 bits, so we shift
             // it into the correct position.
-            | Operand.unwrap(operand) << offset
+            | OperandV2.unwrap(operand) << offset
             // include new op. The opcode is assumed to be 8 bits, so we shift it
             // into the correct position, beyond the operand.
-            | opcode << (offset + 0x18);
+            | bytes32(opcode << (offset + 0x18));
             assembly ("memory-safe") {
                 mstore(activeSourcePointer, activeSource)
             }
@@ -833,7 +835,7 @@ library LibParseState {
         }
     }
 
-    function buildConstants(ParseState memory state) internal pure returns (uint256[] memory constants) {
+    function buildConstants(ParseState memory state) internal pure returns (bytes32[] memory constants) {
         uint256 constantsHeight = state.constantsBuilder & 0xFFFF;
         uint256 tailPtr = state.constantsBuilder >> 0x10;
 

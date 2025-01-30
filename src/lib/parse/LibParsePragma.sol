@@ -59,7 +59,7 @@ library LibParsePragma {
 
                 // Try to parse a literal and treat it as an address.
                 bool success;
-                uint256 value;
+                bytes32 value;
                 (success, cursor, value) = state.tryParseLiteral(cursor, end);
                 // If we didn't parse a literal, we're done with the pragma.
                 if (!success) {

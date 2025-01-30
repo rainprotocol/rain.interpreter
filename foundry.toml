@@ -24,10 +24,10 @@ cbor_metadata = false
 fs_permissions = [
     { access = "read-write", path = "./meta" },
     { access = "read-write", path = "src/generated" },
-    { access = "write", path = "./deployments/latest/RainterpreterParserNPE2" },
-    { access = "write", path = "./deployments/latest/RainterpreterStoreNPE2" },
-    { access = "write", path = "./deployments/latest/RainterpreterNPE2" },
-    { access = "write", path = "./deployments/latest/RainterpreterExpressionDeployerNPE2" }
+    { access = "write", path = "./deployments/latest/RainterpreterParser" },
+    { access = "write", path = "./deployments/latest/RainterpreterStore" },
+    { access = "write", path = "./deployments/latest/Rainterpreter" },
+    { access = "write", path = "./deployments/latest/RainterpreterExpressionDeployer" }
 ]
 
 remappings = [

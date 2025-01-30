@@ -47,9 +47,9 @@ library LibParseLiteralHex {
     ///   - shift the nybble into the total at the correct position
     ///     (4 bits per nybble)
     /// - return the total
-    function parseHex(ParseState memory state, uint256 cursor, uint256 end) internal pure returns (uint256, uint256) {
+    function parseHex(ParseState memory state, uint256 cursor, uint256 end) internal pure returns (uint256, bytes32) {
         unchecked {
-            uint256 value;
+            bytes32 value;
             uint256 hexStart;
             uint256 hexEnd;
             (hexStart, hexEnd, cursor) = state.boundHex(cursor, end);
@@ -74,18 +74,18 @@ library LibParseLiteralHex {
                     //slither-disable-next-line incorrect-shift
                     uint256 hexChar = 1 << hexCharByte;
 
-                    uint256 nybble;
+                    bytes32 nybble;
                     // 0-9
                     if (hexChar & CMASK_NUMERIC_0_9 != 0) {
-                        nybble = hexCharByte - uint256(uint8(bytes1("0")));
+                        nybble = bytes32(hexCharByte - uint256(uint8(bytes1("0"))));
                     }
                     // a-f
                     else if (hexChar & CMASK_LOWER_ALPHA_A_F != 0) {
-                        nybble = hexCharByte - uint256(uint8(bytes1("a"))) + 10;
+                        nybble = bytes32(hexCharByte - uint256(uint8(bytes1("a"))) + 10);
                     }
                     // A-F
                     else if (hexChar & CMASK_UPPER_ALPHA_A_F != 0) {
-                        nybble = hexCharByte - uint256(uint8(bytes1("A"))) + 10;
+                        nybble = bytes32(hexCharByte - uint256(uint8(bytes1("A"))) + 10);
                     } else {
                         revert MalformedHexLiteral(state.parseErrorOffset(cursor));
                     }

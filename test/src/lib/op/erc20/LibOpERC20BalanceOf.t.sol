@@ -1,10 +1,10 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // import {stdError} from "forge-std/Test.sol";
 // import {OpTest} from "test/abstract/OpTest.sol";
-// import {IntegrityCheckStateNP} from "src/lib/integrity/LibIntegrityCheckNP.sol";
-// import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+// import {IntegrityCheckState} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 // import {LibOpERC20BalanceOf} from "src/lib/op/erc20/LibOpERC20BalanceOf.sol";
 // import {IERC20} from "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
 // import {UnexpectedOperand} from "src/error/ErrParse.sol";
@@ -16,7 +16,7 @@
 // /// @title LibOpERC20BalanceOfTest
 // /// @notice Test the opcode for getting the balance of an erc20 token.
 // contract LibOpERC20BalanceOfTest is OpTest {
-//     function testOpERC20BalanceOfNPIntegrity(IntegrityCheckStateNP memory state, Operand operand) external pure {
+//     function testOpERC20BalanceOfNPIntegrity(IntegrityCheckState memory state, Operand operand) external pure {
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpERC20BalanceOf.integrity(state, operand);
 
 //         assertEq(calcInputs, 2);

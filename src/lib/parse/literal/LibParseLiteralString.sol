@@ -75,7 +75,7 @@ library LibParseLiteralString {
     function parseString(ParseState memory state, uint256 cursor, uint256 end)
         internal
         pure
-        returns (uint256, uint256)
+        returns (uint256, bytes32)
     {
         uint256 stringStart;
         uint256 stringEnd;
@@ -94,6 +94,6 @@ library LibParseLiteralString {
         assembly ("memory-safe") {
             mstore(str, memSnapshot)
         }
-        return (cursor, IntOrAString.unwrap(intOrAString));
+        return (cursor, bytes32(IntOrAString.unwrap(intOrAString)));
     }
 }

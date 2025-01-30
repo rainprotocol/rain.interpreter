@@ -1,14 +1,14 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
-// import {OpTest, IntegrityCheckStateNP, Operand, InterpreterStateNP, UnexpectedOperand} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, Operand, InterpreterState, UnexpectedOperand} from "test/abstract/OpTest.sol";
 // import {LibOpSqrt} from "src/lib/op/math/LibOpSqrt.sol";
 // import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
 // contract LibOpSqrtTest is OpTest {
 //     /// Directly test the integrity logic of LibOpSqrt.
 //     /// Inputs are always 1, outputs are always 1.
-//     function testOpSqrtIntegrity(IntegrityCheckStateNP memory state, Operand operand) external pure {
+//     function testOpSqrtIntegrity(IntegrityCheckState memory state, Operand operand) external pure {
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpSqrt.integrity(state, operand);
 //         assertEq(calcInputs, 1);
 //         assertEq(calcOutputs, 1);
@@ -17,7 +17,7 @@
 //     /// Directly test the runtime logic of LibOpSqrt.
 //     function testOpSqrtRun(uint256 a) public view {
 //         a = bound(a, 0, type(uint64).max - 1e18);
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 
 //         Operand operand = LibOperand.build(1, 1, 0);
 //         uint256[] memory inputs = new uint256[](1);

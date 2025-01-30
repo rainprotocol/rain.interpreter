@@ -33,7 +33,7 @@ library LibParseLiteralSubParseable {
     function parseSubParseable(ParseState memory state, uint256 cursor, uint256 end)
         internal
         view
-        returns (uint256, uint256)
+        returns (uint256, bytes32)
     {
         unchecked {
             // Move cursor past opening bracket.

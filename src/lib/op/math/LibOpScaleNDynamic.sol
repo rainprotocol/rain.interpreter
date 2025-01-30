@@ -1,9 +1,9 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity ^0.8.18;
+// SPDX-License-Identifier: CAL
+pragma solidity ^0.8.18;
 
-// import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-// import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
-// import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
+// import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+// import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
+// import {InterpreterState} from "../../state/LibInterpreterState.sol";
 // import {Pointer} from "rain.solmem/lib/LibPointer.sol";
 // import {MASK_2BIT} from "sol.lib.binmaskflag/Binary.sol";
 // import {LibParseLiteral} from "../../parse/literal/LibParseLiteral.sol";
@@ -14,13 +14,13 @@
 // library LibOpScaleNDynamic {
 //     using LibFixedPointDecimalScale for uint256;
 
-//     function integrity(IntegrityCheckStateNP memory, Operand) internal pure returns (uint256, uint256) {
+//     function integrity(IntegrityCheckState memory, Operand) internal pure returns (uint256, uint256) {
 //         return (2, 1);
 //     }
 
 //     /// scaleN-dynamic
 //     /// 18 decimal fixed point scaling from runtime value.
-//     function run(InterpreterStateNP memory, Operand operand, Pointer stackTop) internal pure returns (Pointer) {
+//     function run(InterpreterState memory, Operand operand, Pointer stackTop) internal pure returns (Pointer) {
 //         uint256 a;
 //         uint256 scale;
 //         assembly ("memory-safe") {
@@ -38,7 +38,7 @@
 //         return stackTop;
 //     }
 
-//     function referenceFn(InterpreterStateNP memory, Operand operand, uint256[] memory inputs)
+//     function referenceFn(InterpreterState memory, Operand operand, uint256[] memory inputs)
 //         internal
 //         pure
 //         returns (uint256[] memory outputs)

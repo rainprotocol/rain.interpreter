@@ -1,22 +1,22 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity ^0.8.18;
+// SPDX-License-Identifier: CAL
+pragma solidity ^0.8.18;
 
-// import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
-// import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
-// import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+// import {InterpreterState} from "../../state/LibInterpreterState.sol";
+// import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
+// import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 // import {Pointer} from "rain.solmem/lib/LibPointer.sol";
 // import {UD60x18, frac, ceil, floor} from "prb-math/UD60x18.sol";
 
 // /// @title LibOpSnapToUnit
 // /// @notice Opcode for the snap to unit of an decimal 18 fixed point number.
 // library LibOpSnapToUnit {
-//     function integrity(IntegrityCheckStateNP memory, Operand) internal pure returns (uint256, uint256) {
+//     function integrity(IntegrityCheckState memory, Operand) internal pure returns (uint256, uint256) {
 //         // There must be two inputs and one output.
 //         return (2, 1);
 //     }
 
 //     /// snap-to-unit
-//     function run(InterpreterStateNP memory, Operand, Pointer stackTop) internal pure returns (Pointer) {
+//     function run(InterpreterState memory, Operand, Pointer stackTop) internal pure returns (Pointer) {
 //         unchecked {
 //             uint256 threshold;
 //             uint256 value;
@@ -45,7 +45,7 @@
 //     }
 
 //     /// Gas intensive reference implementation of snap-to-unit for testing.
-//     function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory inputs)
+//     function referenceFn(InterpreterState memory, Operand, uint256[] memory inputs)
 //         internal
 //         pure
 //         returns (uint256[] memory)

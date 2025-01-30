@@ -1,5 +1,5 @@
-// // // SPDX-License-Identifier: CAL
-// // pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // import {Pointer} from "rain.solmem/lib/LibPointer.sol";
 // import {LibStackPointer} from "rain.solmem/lib/LibStackPointer.sol";
@@ -8,13 +8,13 @@
 // // import {OpTest} from "test/abstract/OpTest.sol";
 // // import {INVALID_BYTECODE} from "test/lib/etch/LibEtch.sol";
 
-// // import {LibInterpreterStateNP, InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
-// // import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// // import {LibInterpreterState, InterpreterState} from "src/lib/state/LibInterpreterState.sol";
+// // import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 // // import {LibOpChainIdNP} from "src/lib/op/evm/LibOpChainIdNP.sol";
 
-// // import {RainterpreterNPE2} from "src/concrete/RainterpreterNPE2.sol";
-// // import {RainterpreterStoreNPE2, FullyQualifiedNamespace} from "src/concrete/RainterpreterStoreNPE2.sol";
-// // import {RainterpreterExpressionDeployerNPE2} from "src/concrete/RainterpreterExpressionDeployerNPE2.sol";
+// // import {Rainterpreter} from "src/concrete/Rainterpreter.sol";
+// // import {RainterpreterStore, FullyQualifiedNamespace} from "src/concrete/RainterpreterStore.sol";
+// // import {RainterpreterExpressionDeployer} from "src/concrete/RainterpreterExpressionDeployer.sol";
 // // import {
 // //     Operand, IInterpreterV4, SourceIndexV2
 // // } from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
@@ -26,11 +26,11 @@
 // // /// @title LibOpChainIdNPTest
 // // /// @notice Test the runtime and integrity time logic of LibOpChainIdNP.
 // // contract LibOpChainIdNPTest is OpTest {
-// //     using LibInterpreterStateNP for InterpreterStateNP;
+// //     using LibInterpreterState for InterpreterState;
 
 //     /// Directly test the integrity logic of LibOpChainIdNP.
 //     function testOpChainIDNPIntegrity(
-//         IntegrityCheckStateNP memory state,
+//         IntegrityCheckState memory state,
 //         uint8 inputs,
 //         uint8 outputs,
 //         uint16 operandData
@@ -47,7 +47,7 @@
 // //     /// Directly test the runtime logic of LibOpChainId. This tests that the
 // //     /// opcode correctly pushes the chain ID onto the stack.
 // //     function testOpChainIdNPRun(uint64 chainId, uint16 operandData) external {
-// //         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+// //         InterpreterState memory state = opTestDefaultInterpreterState();
 // //         vm.chainId(chainId);
 // //         uint256[] memory inputs = new uint256[](0);
 // //         Operand operand = LibOperand.build(0, 1, operandData);

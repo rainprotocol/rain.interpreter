@@ -5,7 +5,7 @@ import {Test} from "forge-std/Test.sol";
 import {AuthoringMetaV2} from "rain.interpreter.interface/interface/IParserV2.sol";
 import {LibParseMeta} from "rain.interpreter.interface/lib/parse/LibParseMeta.sol";
 import {LibParse} from "src/lib/parse/LibParse.sol";
-import {Operand, LibParseOperand} from "src/lib/parse/LibParseOperand.sol";
+import {OperandV2, LibParseOperand} from "src/lib/parse/LibParseOperand.sol";
 import {LibParseState, ParseState} from "src/lib/parse/LibParseState.sol";
 import {LibConvert} from "rain.lib.typecast/LibConvert.sol";
 import {LibParseLiteral} from "src/lib/parse/literal/LibParseLiteral.sol";
@@ -57,8 +57,8 @@ contract LibParseSingleRHSNamedGasTest is Test {
     }
 
     function operandHandlers() internal pure returns (bytes memory) {
-        function (uint256[] memory) internal pure returns (Operand)[] memory handlers =
-            new function (uint256[] memory) internal pure returns (Operand)[](32);
+        function (uint256[] memory) internal pure returns (OperandV2)[] memory handlers =
+            new function (uint256[] memory) internal pure returns (OperandV2)[](32);
         handlers[0] = LibParseOperand.handleOperandDisallowed;
         handlers[1] = LibParseOperand.handleOperandDisallowed;
         handlers[2] = LibParseOperand.handleOperandDisallowed;

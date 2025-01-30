@@ -2,8 +2,8 @@
 pragma solidity =0.8.25;
 
 import {OpTest} from "test/abstract/OpTest.sol";
-import {IntegrityCheckStateNP} from "src/lib/integrity/LibIntegrityCheckNP.sol";
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {IntegrityCheckState} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {LibOpERC5313OwnerNP} from "src/lib/op/erc5313/LibOpERC5313OwnerNP.sol";
 import {IERC5313} from "openzeppelin-contracts/contracts/interfaces/IERC5313.sol";
 import {UnexpectedOperand} from "src/error/ErrParse.sol";
@@ -12,7 +12,7 @@ import {LibOperand} from "test/lib/operand/LibOperand.sol";
 /// @title LibOpERC5313OwnerNPTest
 /// @notice Test the opcode for getting the owner of an erc5313 contract.
 contract LibOpERC5313OwnerNPTest is OpTest {
-    function testOpERC5313OwnerOfNPIntegrity(IntegrityCheckStateNP memory state, Operand operand) external pure {
+    function testOpERC5313OwnerOfNPIntegrity(IntegrityCheckState memory state, OperandV2 operand) external pure {
         (uint256 calcInputs, uint256 calcOutputs) = LibOpERC5313OwnerNP.integrity(state, operand);
 
         assertEq(calcInputs, 1);
@@ -25,7 +25,7 @@ contract LibOpERC5313OwnerNPTest is OpTest {
 
         uint256[] memory inputs = new uint256[](1);
         inputs[0] = uint256(uint160(account));
-        Operand operand = LibOperand.build(1, 1, operandData);
+        OperandV2 operand = LibOperand.build(1, 1, operandData);
 
         vm.mockCall(account, abi.encodeWithSelector(IERC5313.owner.selector), abi.encode(owner));
         // called once for reference, once for run

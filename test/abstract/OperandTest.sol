@@ -11,13 +11,13 @@ abstract contract OperandTest is Test {
 
     // External version of parse for testing. Expect revert only works properly
     // when called externally.
-    function parse(bytes memory rainString) external view returns (bytes memory bytecode, uint256[] memory constants) {
+    function parse(bytes memory rainString) external view returns (bytes memory bytecode, bytes32[] memory constants) {
         return LibMetaFixture.newState(string(rainString)).parse();
     }
 
     function checkParseError(bytes memory rainString, bytes memory err) internal {
         bytes memory bytecode;
-        uint256[] memory constants;
+        bytes32[] memory constants;
         vm.expectRevert(err);
         (bytecode, constants) = this.parse(rainString);
         (bytecode);
@@ -25,7 +25,7 @@ abstract contract OperandTest is Test {
     }
 
     function checkOperandParse(bytes memory rainString, bytes memory operand) internal view {
-        (bytes memory bytecode, uint256[] memory constants) = this.parse(rainString);
+        (bytes memory bytecode, bytes32[] memory constants) = this.parse(rainString);
         assertEq(
             bytecode,
             bytes.concat(

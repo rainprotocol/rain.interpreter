@@ -1,14 +1,14 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
-// import {OpTest, IntegrityCheckStateNP, Operand, InterpreterStateNP, UnexpectedOperand} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, Operand, InterpreterState, UnexpectedOperand} from "test/abstract/OpTest.sol";
 // import {LibOpLog10} from "src/lib/op/math/LibOpLog10.sol";
 // import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
 // contract LibOpLog10Test is OpTest {
 //     /// Directly test the integrity logic of LibOpLog10.
 //     /// Inputs are always 1, outputs are always 1.
-//     function testOpLog10Integrity(IntegrityCheckStateNP memory state, Operand operand) external pure {
+//     function testOpLog10Integrity(IntegrityCheckState memory state, Operand operand) external pure {
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpLog10.integrity(state, operand);
 //         assertEq(calcInputs, 1);
 //         assertEq(calcOutputs, 1);
@@ -18,7 +18,7 @@
 //     function testOpLog10Run(uint256 a, uint16 operandData) public view {
 //         // e lifted from prb math.
 //         a = bound(a, 2_718281828459045235, type(uint64).max - 1e18);
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 
 //         Operand operand = LibOperand.build(1, 1, operandData);
 //         uint256[] memory inputs = new uint256[](1);

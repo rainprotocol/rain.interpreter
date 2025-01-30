@@ -1,23 +1,23 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity ^0.8.18;
+// SPDX-License-Identifier: CAL
+pragma solidity ^0.8.18;
 
 // import {UD60x18, mul, add} from "prb-math/UD60x18.sol";
-// import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+// import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 // import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-// import {InterpreterStateNP} from "../../../state/LibInterpreterStateNP.sol";
-// import {IntegrityCheckStateNP} from "../../../integrity/LibIntegrityCheckNP.sol";
+// import {InterpreterState} from "../../../state/LibInterpreterState.sol";
+// import {IntegrityCheckState} from "../../../integrity/LibIntegrityCheckNP.sol";
 
 // /// @title LibOpLinearGrowth
 // /// @notice Linear growth is base + rate * t where a is the initial value, r is
 // /// the growth rate, and t is time.
 // library LibOpLinearGrowth {
-//     function integrity(IntegrityCheckStateNP memory, Operand) internal pure returns (uint256, uint256) {
+//     function integrity(IntegrityCheckState memory, Operand) internal pure returns (uint256, uint256) {
 //         // There must be three inputs and one output.
 //         return (3, 1);
 //     }
 
 //     /// linear-growth
-//     function run(InterpreterStateNP memory, Operand, Pointer stackTop) internal pure returns (Pointer) {
+//     function run(InterpreterState memory, Operand, Pointer stackTop) internal pure returns (Pointer) {
 //         uint256 base;
 //         uint256 rate;
 //         uint256 t;
@@ -36,7 +36,7 @@
 //     }
 
 //     /// Gas intensive reference implementation for testing.
-//     function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory inputs)
+//     function referenceFn(InterpreterState memory, Operand, uint256[] memory inputs)
 //         internal
 //         pure
 //         returns (uint256[] memory)

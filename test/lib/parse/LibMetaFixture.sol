@@ -3,7 +3,7 @@ pragma solidity ^0.8.18;
 
 import {AuthoringMetaV2} from "rain.interpreter.interface/interface/IParserV2.sol";
 import {LibParseMeta} from "rain.interpreter.interface/lib/parse/LibParseMeta.sol";
-import {Operand, LibParseOperand} from "src/lib/parse/LibParseOperand.sol";
+import {OperandV2, LibParseOperand} from "src/lib/parse/LibParseOperand.sol";
 import {LibParseState, ParseState} from "src/lib/parse/LibParseState.sol";
 import {LibParseLiteral} from "src/lib/parse/literal/LibParseLiteral.sol";
 import {LibConvert} from "rain.lib.typecast/LibConvert.sol";
@@ -50,8 +50,8 @@ library LibMetaFixture {
     }
 
     function operandHandlerFunctionPointers() internal pure returns (bytes memory) {
-        function (uint256[] memory) internal pure returns (Operand)[] memory handlers =
-            new function (uint256[] memory) internal pure returns (Operand)[](FIXTURE_OPS_LENGTH);
+        function (bytes32[] memory) internal pure returns (OperandV2)[] memory handlers =
+            new function (bytes32[] memory) internal pure returns (OperandV2)[](FIXTURE_OPS_LENGTH);
         handlers[0] = LibParseOperand.handleOperandSingleFull;
         handlers[1] = LibParseOperand.handleOperandSingleFull;
         // a

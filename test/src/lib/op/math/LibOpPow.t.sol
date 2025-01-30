@@ -1,14 +1,14 @@
 // SPDX-License-Identifier: CAL
 pragma solidity =0.8.25;
 
-// import {OpTest, IntegrityCheckStateNP, Operand, InterpreterStateNP, UnexpectedOperand} from "test/abstract/OpTest.sol";
+// import {OpTest, IntegrityCheckState, Operand, InterpreterState, UnexpectedOperand} from "test/abstract/OpTest.sol";
 // import {LibOpPow} from "src/lib/op/math/LibOpPow.sol";
 // import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
 // contract LibOpPowTest is OpTest {
 //     /// Directly test the integrity logic of LibOpPow.
 //     /// Inputs are always 2, outputs are always 1.
-//     function testOpPowIntegrity(IntegrityCheckStateNP memory state, Operand operand) external pure {
+//     function testOpPowIntegrity(IntegrityCheckState memory state, Operand operand) external pure {
 //         (uint256 calcInputs, uint256 calcOutputs) = LibOpPow.integrity(state, operand);
 //         assertEq(calcInputs, 2);
 //         assertEq(calcOutputs, 1);
@@ -24,7 +24,7 @@ pragma solidity =0.8.25;
 //         // do things that way.
 //         a = bound(a, 0, type(uint64).max);
 //         b = bound(b, 0, 10);
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 
 //         Operand operand = LibOperand.build(2, 1, 0);
 //         uint256[] memory inputs = new uint256[](2);

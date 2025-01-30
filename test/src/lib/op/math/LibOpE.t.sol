@@ -1,11 +1,11 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // import {OpTest} from "test/abstract/OpTest.sol";
-// import {LibInterpreterStateNP, InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
+// import {LibInterpreterState, InterpreterState} from "src/lib/state/LibInterpreterState.sol";
 // import {LibOpE} from "src/lib/op/math/LibOpE.sol";
 // import {LibOperand, Operand} from "test/lib/operand/LibOperand.sol";
-// import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 // import {IInterpreterV4, EvalV4} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 // import {IInterpreterStoreV2} from "rain.interpreter.interface/interface/IInterpreterStoreV2.sol";
 // import {SignedContextV1} from "rain.interpreter.interface/interface/IInterpreterCallerV3.sol";
@@ -17,7 +17,7 @@
 // /// @title LibOpETest
 // contract LibOpETest is OpTest {
 //     /// Directly test the integrity logic of LibOpE.
-//     function testOpEIntegrity(IntegrityCheckStateNP memory state, uint8 inputs, uint8 outputs, uint16 operandData)
+//     function testOpEIntegrity(IntegrityCheckState memory state, uint8 inputs, uint8 outputs, uint16 operandData)
 //         external
 //         pure
 //     {
@@ -33,7 +33,7 @@
 // /// Directly test the runtime logic of LibOpE. This tests that the
 // /// opcode correctly pushes the mathematical constant e onto the stack.
 // function testOpERun(uint16 operandData) external view {
-//     InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//     InterpreterState memory state = opTestDefaultInterpreterState();
 //     Operand operand = LibOperand.build(0, 1, operandData);
 //     uint256[] memory inputs = new uint256[](0);
 //     opReferenceCheck(state, operand, LibOpE.referenceFn, LibOpE.integrity, LibOpE.run, inputs);

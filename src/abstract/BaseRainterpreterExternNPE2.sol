@@ -8,8 +8,12 @@ import {Pointer} from "rain.solmem/lib/LibPointer.sol";
 import {LibStackPointer} from "rain.solmem/lib/LibStackPointer.sol";
 import {LibUint256Array} from "rain.solmem/lib/LibUint256Array.sol";
 
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-import {IInterpreterExternV3, ExternDispatch} from "rain.interpreter.interface/interface/IInterpreterExternV3.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {
+    IInterpreterExternV4,
+    ExternDispatchV2,
+    StackItem
+} from "rain.interpreter.interface/interface/unstable/IInterpreterExternV4.sol";
 import {IIntegrityToolingV1} from "rain.sol.codegen/interface/IIntegrityToolingV1.sol";
 import {IOpcodeToolingV1} from "rain.sol.codegen/interface/IOpcodeToolingV1.sol";
 
@@ -24,19 +28,19 @@ bytes constant INTEGRITY_FUNCTION_POINTERS = hex"";
 
 /// Base implementation of `IInterpreterExternV3`. Inherit from this contract,
 /// and override `functionPointers` to provide a list of function pointers.
-abstract contract BaseRainterpreterExternNPE2 is IInterpreterExternV3, IIntegrityToolingV1, IOpcodeToolingV1, ERC165 {
+abstract contract BaseRainterpreterExternNPE2 is IInterpreterExternV4, IIntegrityToolingV1, IOpcodeToolingV1, ERC165 {
     using LibStackPointer for uint256[];
     using LibStackPointer for Pointer;
     using LibUint256Array for uint256;
     using LibUint256Array for uint256[];
 
-    /// @inheritdoc IInterpreterExternV3
-    function extern(ExternDispatch dispatch, uint256[] memory inputs)
+    /// @inheritdoc IInterpreterExternV4
+    function extern(ExternDispatchV2 dispatch, StackItem[] memory inputs)
         external
         view
         virtual
         override
-        returns (uint256[] memory outputs)
+        returns (StackItem[] memory outputs)
     {
         unchecked {
             bytes memory fPointers = opcodeFunctionPointers();
@@ -45,10 +49,10 @@ abstract contract BaseRainterpreterExternNPE2 is IInterpreterExternV3, IIntegrit
             assembly ("memory-safe") {
                 fPointersStart := add(fPointers, 0x20)
             }
-            uint256 opcode = (ExternDispatch.unwrap(dispatch) >> 0x10) & type(uint16).max;
-            Operand operand = Operand.wrap(ExternDispatch.unwrap(dispatch) & type(uint16).max);
+            uint256 opcode = uint256((ExternDispatchV2.unwrap(dispatch) >> 0x10) & bytes32(uint256(type(uint16).max)));
+            OperandV2 operand = OperandV2.wrap(ExternDispatchV2.unwrap(dispatch) & bytes32(uint256(type(uint16).max)));
 
-            function(Operand, uint256[] memory) internal view returns (uint256[] memory) f;
+            function(OperandV2, StackItem[] memory) internal view returns (StackItem[] memory) f;
             assembly ("memory-safe") {
                 f := shr(0xf0, mload(add(fPointersStart, mul(mod(opcode, fsCount), 2))))
             }
@@ -56,8 +60,8 @@ abstract contract BaseRainterpreterExternNPE2 is IInterpreterExternV3, IIntegrit
         }
     }
 
-    /// @inheritdoc IInterpreterExternV3
-    function externIntegrity(ExternDispatch dispatch, uint256 expectedInputs, uint256 expectedOutputs)
+    /// @inheritdoc IInterpreterExternV4
+    function externIntegrity(ExternDispatchV2 dispatch, uint256 expectedInputs, uint256 expectedOutputs)
         external
         pure
         virtual
@@ -71,10 +75,10 @@ abstract contract BaseRainterpreterExternNPE2 is IInterpreterExternV3, IIntegrit
             assembly ("memory-safe") {
                 fPointersStart := add(fPointers, 0x20)
             }
-            uint256 opcode = (ExternDispatch.unwrap(dispatch) >> 0x10) & type(uint16).max;
-            Operand operand = Operand.wrap(ExternDispatch.unwrap(dispatch) & type(uint16).max);
+            uint256 opcode = uint256((ExternDispatchV2.unwrap(dispatch) >> 0x10) & bytes32(uint256(type(uint16).max)));
+            OperandV2 operand = OperandV2.wrap(ExternDispatchV2.unwrap(dispatch) & bytes32(uint256(type(uint16).max)));
 
-            function(Operand, uint256, uint256) internal pure returns (uint256, uint256) f;
+            function(OperandV2, uint256, uint256) internal pure returns (uint256, uint256) f;
             assembly ("memory-safe") {
                 f := shr(0xf0, mload(add(fPointersStart, mul(mod(opcode, fsCount), 2))))
             }
@@ -84,7 +88,7 @@ abstract contract BaseRainterpreterExternNPE2 is IInterpreterExternV3, IIntegrit
 
     /// @inheritdoc ERC165
     function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {
-        return interfaceId == type(IInterpreterExternV3).interfaceId || super.supportsInterface(interfaceId);
+        return interfaceId == type(IInterpreterExternV4).interfaceId || super.supportsInterface(interfaceId);
     }
 
     /// Overrideable function to provide the list of function pointers for

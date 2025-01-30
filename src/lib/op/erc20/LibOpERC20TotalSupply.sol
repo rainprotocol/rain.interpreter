@@ -1,23 +1,23 @@
-// // SPDX-License-Identifier: CAL
-// pragma solidity ^0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity ^0.8.25;
 
 // import {IERC20} from "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 // import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-// import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
-// import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-// import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
+// import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
+// import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+// import {InterpreterState} from "../../state/LibInterpreterState.sol";
 // import {IERC20Metadata} from "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 
 // /// @title LibOpERC20TotalSupply
 // /// @notice Opcode for ERC20 `totalSupply`.
 // library LibOpERC20TotalSupply {
-//     function integrity(IntegrityCheckStateNP memory, Operand) internal pure returns (uint256, uint256) {
+//     function integrity(IntegrityCheckState memory, Operand) internal pure returns (uint256, uint256) {
 //         // Always 1 input, the contract.
 //         // Always 1 output, the total supply.
 //         return (1, 1);
 //     }
 
-//     function run(InterpreterStateNP memory, Operand, Pointer stackTop) internal view returns (Pointer) {
+//     function run(InterpreterState memory, Operand, Pointer stackTop) internal view returns (Pointer) {
 //         uint256 token;
 //         assembly ("memory-safe") {
 //             token := mload(stackTop)
@@ -39,7 +39,7 @@
 //         return stackTop;
 //     }
 
-//     function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory inputs)
+//     function referenceFn(InterpreterState memory, Operand, uint256[] memory inputs)
 //         internal
 //         view
 //         returns (uint256[] memory)

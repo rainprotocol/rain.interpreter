@@ -2,7 +2,7 @@
 pragma solidity =0.8.25;
 
 import {Test} from "forge-std/Test.sol";
-import {LibParseOperand, Operand} from "src/lib/parse/LibParseOperand.sol";
+import {LibParseOperand, OperandV2} from "src/lib/parse/LibParseOperand.sol";
 import {ParseState} from "src/lib/parse/LibParseState.sol";
 import {LibBytes, Pointer} from "rain.solmem/lib/LibBytes.sol";
 import {Strings} from "openzeppelin-contracts/contracts/utils/Strings.sol";

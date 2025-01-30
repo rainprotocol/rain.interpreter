@@ -1,12 +1,13 @@
 // SPDX-License-Identifier: CAL
 pragma solidity ^0.8.18;
 
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {
-    IInterpreterExternV3,
-    ExternDispatch,
-    EncodedExternDispatch
-} from "rain.interpreter.interface/interface/IInterpreterExternV3.sol";
+    IInterpreterExternV4,
+    ExternDispatchV2,
+    EncodedExternDispatchV2,
+    StackItem
+} from "rain.interpreter.interface/interface/unstable/IInterpreterExternV4.sol";
 
 /// @title LibExtern
 /// Defines and implements an encoding and decoding scheme for the data that
@@ -18,13 +19,16 @@ library LibExtern {
     /// - bits [16,32): the opcode
     /// IMPORTANT: The encoding process does not check that either the opcode or
     /// operand fit within 16 bits. This is the responsibility of the caller.
-    function encodeExternDispatch(uint256 opcode, Operand operand) internal pure returns (ExternDispatch) {
-        return ExternDispatch.wrap(opcode << 0x10 | Operand.unwrap(operand));
+    function encodeExternDispatch(uint256 opcode, OperandV2 operand) internal pure returns (ExternDispatchV2) {
+        return ExternDispatchV2.wrap(bytes32(opcode) << 0x10 | OperandV2.unwrap(operand));
     }
 
     /// Inverse of `encodeExternDispatch`.
-    function decodeExternDispatch(ExternDispatch dispatch) internal pure returns (uint256, Operand) {
-        return (ExternDispatch.unwrap(dispatch) >> 0x10, Operand.wrap(uint16(ExternDispatch.unwrap(dispatch))));
+    function decodeExternDispatch(ExternDispatchV2 dispatch) internal pure returns (uint256, OperandV2) {
+        return (
+            uint256(ExternDispatchV2.unwrap(dispatch) >> 0x10),
+            OperandV2.wrap(ExternDispatchV2.unwrap(dispatch) & bytes32(uint256(0xFFFF)))
+        );
     }
 
     /// Encodes an extern address and dispatch pair into a single 32-byte word.
@@ -38,23 +42,25 @@ library LibExtern {
     /// IMPORTANT: The encoding process does not check that any of the values
     /// fit within their respective bit ranges. This is the responsibility of
     /// the caller.
-    function encodeExternCall(IInterpreterExternV3 extern, ExternDispatch dispatch)
+    function encodeExternCall(IInterpreterExternV4 extern, ExternDispatchV2 dispatch)
         internal
         pure
-        returns (EncodedExternDispatch)
+        returns (EncodedExternDispatchV2)
     {
-        return EncodedExternDispatch.wrap(uint256(uint160(address(extern))) | ExternDispatch.unwrap(dispatch) << 160);
+        return EncodedExternDispatchV2.wrap(
+            bytes32(uint256(uint160(address(extern)))) | ExternDispatchV2.unwrap(dispatch) << 160
+        );
     }
 
     /// Inverse of `encodeExternCall`.
-    function decodeExternCall(EncodedExternDispatch dispatch)
+    function decodeExternCall(EncodedExternDispatchV2 dispatch)
         internal
         pure
-        returns (IInterpreterExternV3, ExternDispatch)
+        returns (IInterpreterExternV4, ExternDispatchV2)
     {
         return (
-            IInterpreterExternV3(address(uint160(EncodedExternDispatch.unwrap(dispatch)))),
-            ExternDispatch.wrap(EncodedExternDispatch.unwrap(dispatch) >> 160)
+            IInterpreterExternV4(address(uint160(uint256(EncodedExternDispatchV2.unwrap(dispatch))))),
+            ExternDispatchV2.wrap(EncodedExternDispatchV2.unwrap(dispatch) >> 160)
         );
     }
 }

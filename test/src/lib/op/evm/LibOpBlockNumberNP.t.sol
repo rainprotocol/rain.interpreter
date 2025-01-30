@@ -1,5 +1,5 @@
-// // // SPDX-License-Identifier: CAL
-// // pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // // import {OpTest} from "test/abstract/OpTest.sol";
 
@@ -13,8 +13,8 @@
 // import {LibStackPointer} from "rain.solmem/lib/LibStackPointer.sol";
 // import {IMetaV1} from "rain.metadata/interface/deprecated/IMetaV1.sol";
 // import {IInterpreterStoreV2} from "rain.interpreter.interface/interface/IInterpreterStoreV2.sol";
-// import {LibInterpreterStateNP, InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
-// import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// import {LibInterpreterState, InterpreterState} from "src/lib/state/LibInterpreterState.sol";
+// import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 // import {LibContext} from "rain.interpreter.interface/lib/caller/LibContext.sol";
 // import {SignedContextV1} from "rain.interpreter.interface/interface/IInterpreterCallerV3.sol";
 // import {LibOpBlockNumberNP} from "src/lib/op/evm/LibOpBlockNumberNP.sol";
@@ -25,11 +25,11 @@
 // // contract LibOpBlockNumberNPTest is OpTest {
 // //     using LibPointer for Pointer;
 // //     using LibStackPointer for Pointer;
-// //     using LibInterpreterStateNP for InterpreterStateNP;
+// //     using LibInterpreterState for InterpreterState;
 
 //     /// Directly test the integrity logic of LibOpBlockNumberNP.
 //     function testOpBlockNumberNPIntegrity(
-//         IntegrityCheckStateNP memory state,
+//         IntegrityCheckState memory state,
 //         uint8 inputs,
 //         uint8 outputs,
 //         uint16 operandData
@@ -47,7 +47,7 @@
 // //     /// opcode correctly pushes the block number onto the stack.
 // //     function testOpBlockNumberNPRun(uint256 blockNumber, uint16 operandData) external {
 // //         blockNumber = bound(blockNumber, 0, type(uint256).max / 1e18);
-// //         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+// //         InterpreterState memory state = opTestDefaultInterpreterState();
 // //         vm.roll(blockNumber);
 // //         uint256[] memory inputs = new uint256[](0);
 // //         Operand operand = LibOperand.build(0, 1, operandData);

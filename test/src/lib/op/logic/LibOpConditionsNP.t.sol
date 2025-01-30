@@ -1,13 +1,13 @@
-// // // SPDX-License-Identifier: CAL
-// // pragma solidity =0.8.25;
+// SPDX-License-Identifier: CAL
+pragma solidity =0.8.25;
 
 // // import {LibUint256Array} from "rain.solmem/lib/LibUint256Array.sol";
 
 // // import {OpTest, UnexpectedOperand} from "test/abstract/OpTest.sol";
 // // import {LibContext} from "rain.interpreter.interface/lib/caller/LibContext.sol";
 // // import {LibOpConditionsNP} from "src/lib/op/logic/LibOpConditionsNP.sol";
-// // import {IntegrityCheckStateNP, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
-// // import {InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
+// // import {IntegrityCheckState, BadOpInputsLength} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+// // import {InterpreterState} from "src/lib/state/LibInterpreterState.sol";
 // // import {
 // //     IInterpreterV4,
 // //     Operand,
@@ -25,7 +25,7 @@
 //     /// Directly test the integrity logic of LibOpConditionsNP. This tests the happy
 //     /// path where the operand is valid.
 //     function testOpConditionsNPIntegrityHappy(
-//         IntegrityCheckStateNP memory state,
+//         IntegrityCheckState memory state,
 //         uint8 inputs,
 //         uint8 outputs,
 //         uint16 operandData
@@ -46,7 +46,7 @@
 
 //     /// Directly test the runtime logic of LibOpConditionsNP.
 //     function testOpConditionsNPRun(uint256[] memory inputs, uint256 finalNonZero) external view {
-//         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+//         InterpreterState memory state = opTestDefaultInterpreterState();
 
 // //         // Ensure that we have inputs that are a valid pairwise conditions.
 // //         vm.assume(inputs.length > 1);
@@ -68,7 +68,7 @@
 // //     /// Test the error case where no conditions are met.
 // //     function testOpConditionsNPRunNoConditionsMet(uint256[] memory inputs, string memory reason) external {
 // //         vm.assume(bytes(reason).length <= 31);
-// //         InterpreterStateNP memory state = opTestDefaultInterpreterState();
+// //         InterpreterState memory state = opTestDefaultInterpreterState();
 // //         // Ensure that we have inputs that are a valid pairwise conditions.
 // //         vm.assume(inputs.length > 1);
 // //         if (inputs.length > 0x0F) {

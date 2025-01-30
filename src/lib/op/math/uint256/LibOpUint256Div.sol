@@ -1,25 +1,25 @@
 // SPDX-License-Identifier: CAL
 pragma solidity ^0.8.18;
 
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
 import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-import {IntegrityCheckStateNP} from "../../../integrity/LibIntegrityCheckNP.sol";
-import {InterpreterStateNP} from "../../../state/LibInterpreterStateNP.sol";
+import {IntegrityCheckState} from "../../../integrity/LibIntegrityCheckNP.sol";
+import {InterpreterState} from "../../../state/LibInterpreterState.sol";
 
 /// @title LibOpUint256Div
 /// @notice Opcode to divide N integers. Errors on divide by zero. Truncates
 /// towards zero.
 library LibOpUint256Div {
-    function integrity(IntegrityCheckStateNP memory, Operand operand) internal pure returns (uint256, uint256) {
+    function integrity(IntegrityCheckState memory, OperandV2 operand) internal pure returns (uint256, uint256) {
         // There must be at least two inputs.
-        uint256 inputs = (Operand.unwrap(operand) >> 0x10) & 0x0F;
+        uint256 inputs = uint256((OperandV2.unwrap(operand) >> 0x10) & bytes32(uint256(0x0F)));
         inputs = inputs > 1 ? inputs : 2;
         return (inputs, 1);
     }
 
     /// uint256-div
     /// Division with implied checks from the Solidity 0.8.x compiler.
-    function run(InterpreterStateNP memory, Operand operand, Pointer stackTop) internal pure returns (Pointer) {
+    function run(InterpreterState memory, OperandV2 operand, Pointer stackTop) internal pure returns (Pointer) {
         uint256 a;
         uint256 b;
         assembly ("memory-safe") {
@@ -30,7 +30,7 @@ library LibOpUint256Div {
         a /= b;
 
         {
-            uint256 inputs = (Operand.unwrap(operand) >> 0x10) & 0x0F;
+            uint256 inputs = uint256((OperandV2.unwrap(operand) >> 0x10) & bytes32(uint256(0x0F)));
             uint256 i = 2;
             while (i < inputs) {
                 assembly ("memory-safe") {
@@ -52,7 +52,7 @@ library LibOpUint256Div {
     }
 
     /// Gas intensive reference implementation of division for testing.
-    function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory inputs)
+    function referenceFn(InterpreterState memory, OperandV2, uint256[] memory inputs)
         internal
         pure
         returns (uint256[] memory outputs)

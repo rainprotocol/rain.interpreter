@@ -5,10 +5,10 @@ import {stdError} from "forge-std/Test.sol";
 
 import {LibOpContextNP} from "src/lib/op/00/LibOpContextNP.sol";
 import {OpTest} from "test/abstract/OpTest.sol";
-import {IntegrityCheckStateNP} from "src/lib/integrity/LibIntegrityCheckNP.sol";
+import {IntegrityCheckState} from "src/lib/integrity/LibIntegrityCheckNP.sol";
 import {
     IInterpreterV4,
-    Operand,
+    OperandV2,
     SourceIndexV2,
     FullyQualifiedNamespace,
     EvalV4
@@ -16,7 +16,7 @@ import {
 import {IInterpreterStoreV2} from "rain.interpreter.interface/interface/IInterpreterStoreV2.sol";
 import {LibContext} from "rain.interpreter.interface/lib/caller/LibContext.sol";
 import {SignedContextV1} from "rain.interpreter.interface/interface/IInterpreterCallerV3.sol";
-import {InterpreterStateNP} from "src/lib/state/LibInterpreterStateNP.sol";
+import {InterpreterState} from "src/lib/state/LibInterpreterState.sol";
 import {LibOperand} from "test/lib/operand/LibOperand.sol";
 
 /// @title LibOpContextNPTest
@@ -25,7 +25,7 @@ contract LibOpContextNPTest is OpTest {
     /// Directly test the integrity logic of LibOpContextNP. All operands are
     /// valid, so the integrity check should always pass. The inputs and
     /// outputs are always 0 and 1 respectively.
-    function testOpContextNPIntegrity(IntegrityCheckStateNP memory state, Operand operand) external pure {
+    function testOpContextNPIntegrity(IntegrityCheckState memory state, OperandV2 operand) external pure {
         (uint256 calcInputs, uint256 calcOutputs) = LibOpContextNP.integrity(state, operand);
 
         assertEq(calcInputs, 0, "inputs");
@@ -36,7 +36,7 @@ contract LibOpContextNPTest is OpTest {
     /// values in the context matrix can be pushed to the stack via. the operand.
     /// forge-config: default.fuzz.runs = 100
     function testOpContextNPRun(uint256[][] memory context, uint256 i, uint256 j) external view {
-        InterpreterStateNP memory state = opTestDefaultInterpreterState();
+        InterpreterState memory state = opTestDefaultInterpreterState();
         state.context = context;
         vm.assume(state.context.length > 0);
         vm.assume(state.context.length < type(uint8).max);
@@ -44,7 +44,7 @@ contract LibOpContextNPTest is OpTest {
         vm.assume(state.context[i].length > 0);
         vm.assume(state.context[i].length < type(uint8).max);
         j = bound(j, 0, state.context[i].length - 1);
-        Operand operand = LibOperand.build(0, 1, uint16(uint256(i) | uint256(j) << 8));
+        OperandV2 operand = LibOperand.build(0, 1, uint16(uint256(i) | uint256(j) << 8));
         uint256[] memory inputs = new uint256[](0);
         opReferenceCheck(
             state, operand, LibOpContextNP.referenceFn, LibOpContextNP.integrity, LibOpContextNP.run, inputs
@@ -55,12 +55,12 @@ contract LibOpContextNPTest is OpTest {
     /// runtime logic will revert if the indexes are OOB. Tests that i is OOB.
     /// forge-config: default.fuzz.runs = 100
     function testOpContextNPRunOOBi(uint256[][] memory context, uint256 i, uint256 j) external {
-        InterpreterStateNP memory state = opTestDefaultInterpreterState();
+        InterpreterState memory state = opTestDefaultInterpreterState();
         state.context = context;
         vm.assume(state.context.length < type(uint8).max);
         i = bound(i, state.context.length, type(uint8).max);
         j = bound(j, 0, type(uint8).max);
-        Operand operand = LibOperand.build(0, 1, uint16(uint256(i) | uint256(j) << 8));
+        OperandV2 operand = LibOperand.build(0, 1, uint16(uint256(i) | uint256(j) << 8));
         uint256[] memory inputs = new uint256[](0);
         vm.expectRevert(stdError.indexOOBError);
         opReferenceCheck(
@@ -72,14 +72,14 @@ contract LibOpContextNPTest is OpTest {
     /// runtime logic will revert if the indexes are OOB. Tests that j is OOB.
     /// forge-config: default.fuzz.runs = 100
     function testOpContextNPRunOOBj(uint256[][] memory context, uint256 i, uint256 j) external {
-        InterpreterStateNP memory state = opTestDefaultInterpreterState();
+        InterpreterState memory state = opTestDefaultInterpreterState();
         state.context = context;
         vm.assume(state.context.length > 0);
         vm.assume(state.context.length < type(uint8).max);
         i = bound(i, 0, state.context.length - 1);
         vm.assume(state.context[i].length < type(uint8).max);
         j = bound(j, state.context[i].length, type(uint8).max);
-        Operand operand = LibOperand.build(0, 1, uint16(uint256(i) | uint256(j) << 8));
+        OperandV2 operand = LibOperand.build(0, 1, uint16(uint256(i) | uint256(j) << 8));
         uint256[] memory inputs = new uint256[](0);
         vm.expectRevert(stdError.indexOOBError);
         opReferenceCheck(

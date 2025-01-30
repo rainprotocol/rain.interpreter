@@ -2,9 +2,9 @@
 pragma solidity ^0.8.18;
 
 import {Pointer} from "rain.solmem/lib/LibPointer.sol";
-import {Operand} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
-import {InterpreterStateNP} from "../../state/LibInterpreterStateNP.sol";
-import {IntegrityCheckStateNP} from "../../integrity/LibIntegrityCheckNP.sol";
+import {OperandV2} from "rain.interpreter.interface/interface/unstable/IInterpreterV4.sol";
+import {InterpreterState} from "../../state/LibInterpreterState.sol";
+import {IntegrityCheckState} from "../../integrity/LibIntegrityCheckNP.sol";
 import {LibCtPop} from "rain.math.binary/lib/LibCtPop.sol";
 
 /// @title LibOpCtPopNP
@@ -16,13 +16,13 @@ import {LibCtPop} from "rain.math.binary/lib/LibCtPop.sol";
 /// There is no evm opcode for this, so we have to implement it ourselves.
 library LibOpCtPopNP {
     /// ctpop unconditionally takes one value and returns one value.
-    function integrity(IntegrityCheckStateNP memory, Operand) internal pure returns (uint256, uint256) {
+    function integrity(IntegrityCheckState memory, OperandV2) internal pure returns (uint256, uint256) {
         return (1, 1);
     }
 
     /// Output is the number of bits set to one in the input. Thin wrapper around
     /// `LibCtPop.ctpop`.
-    function run(InterpreterStateNP memory, Operand, Pointer stackTop) internal pure returns (Pointer) {
+    function run(InterpreterState memory, OperandV2, Pointer stackTop) internal pure returns (Pointer) {
         uint256 value;
         assembly ("memory-safe") {
             value := mload(stackTop)
@@ -37,7 +37,7 @@ library LibOpCtPopNP {
     }
 
     /// The reference implementation of ctpop.
-    function referenceFn(InterpreterStateNP memory, Operand, uint256[] memory inputs)
+    function referenceFn(InterpreterState memory, OperandV2, uint256[] memory inputs)
         internal
         pure
         returns (uint256[] memory)
