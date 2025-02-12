@@ -37,7 +37,6 @@ once_cell = "1.17.1"
 alloy-ethers-typecast = { git = "https://github.com/rainlanguage/alloy-ethers-typecast", rev = "65a68f207287d024cba934bf1e3c8b3f63d2834a" }
 eyre = "0.6"
 rain-error-decoding = { git = "https://github.com/rainlanguage/rain.error", rev = "72d9577fdaf7135113847027ba951f9a43b41827" }
-typeshare = { git = "https://github.com/tomjw64/typeshare", rev = "556b44aafd5304eedf17206800f69834e3820b7c" }
 
 [workspace.dependencies.rain_interpreter_parser]
 path = "crates/parser"

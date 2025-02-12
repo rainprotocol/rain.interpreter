@@ -5,7 +5,8 @@ use rain_interpreter_bindings::IInterpreterV3::{eval3Call, eval3Return};
 use serde::{Deserialize, Serialize};
 use std::ops::{Deref, DerefMut};
 use thiserror::Error;
-use typeshare::typeshare;
+#[cfg(target_family = "wasm")]
+use wasm_bindgen_utils::{impl_wasm_traits, prelude::*};
 
 pub const RAIN_TRACER_ADDRESS: &str = "0xF06Cd48c98d7321649dB7D8b2C396A81A2046555";
 
@@ -15,7 +16,7 @@ pub enum RainEvalResultError {
     CorruptTraces,
 }
 
-#[typeshare(serialized_as = "Vec<String>")]
+#[cfg_attr(target_family = "wasm", tsify::declare(type = "string[]"))]
 type RainStack = Vec<U256>;
 
 /// A struct representing a single trace from a Rain source. Intended to be decoded
@@ -169,12 +170,15 @@ impl DerefMut for RainEvalResults {
     }
 }
 
-#[typeshare]
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+#[cfg_attr(target_family = "wasm", derive(Tsify))]
 pub struct RainEvalResultsTable {
     pub column_names: Vec<String>,
     pub rows: Vec<RainStack>,
 }
+#[cfg(target_family = "wasm")]
+impl_wasm_traits!(RainEvalResultsTable);
 
 impl RainEvalResults {
     pub fn into_flattened_table(&self) -> Result<RainEvalResultsTable, RainEvalResultError> {

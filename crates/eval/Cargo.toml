@@ -16,11 +16,13 @@ reqwest = { workspace = true }
 once_cell = { workspace = true }
 eyre = { workspace = true }
 rain-error-decoding = { workspace = true }
-typeshare = { workspace = true }
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 foundry-evm = { workspace = true }
 revm = { workspace = true }
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+wasm-bindgen-utils = "0.0"
 
 [dev-dependencies]
 tokio = { version = "1.28.0", features = ["full"] }
